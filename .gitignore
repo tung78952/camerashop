@@ -1,0 +1,12 @@
+.env
+
+backend/target/
+
+frontend/node_modules/
+frontend/.next/
+
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
