@@ -60,7 +60,7 @@ public class Product {
 
     private Set<Product> compatibleCameras = new HashSet<>();
 
-    public Product(String name, Brand brand, Category category, Mount mount ){
+    public Product(String name, Brand brand, Category category, Mount mount){
         this.name = name;
         this.brand = brand;
         this.category = category;
