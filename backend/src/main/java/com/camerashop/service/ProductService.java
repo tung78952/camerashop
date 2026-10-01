@@ -3,10 +3,13 @@ package com.camerashop.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.camerashop.dto.common.PageDTO;
 import com.camerashop.dto.product.ProductDetailDTO;
 import com.camerashop.dto.product.ProductSummaryDTO;
 import com.camerashop.dto.product.VariantDTO;
@@ -27,10 +30,10 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
 
-    public List<ProductSummaryDTO> getAll() {
-        return productRepository.findAll().stream()
-                .map(product -> ProductSummaryDTO.from(product))
-                .toList();
+    public PageDTO<ProductSummaryDTO> getAll(Pageable pageable) {
+        Page<ProductSummaryDTO> page = productRepository.findAll(pageable)
+                .map(product -> ProductSummaryDTO.from(product));
+        return PageDTO.from(page);
     }
 
     public ProductDetailDTO getDetail(Long id) {
@@ -50,15 +53,18 @@ public class ProductService {
 
     private List<Product> findCompatibleProducts(Product product) {
         String category = product.getCategory().getName();
+
         if (category.equals(BATTERY_AND_CHARGER)) {
             return productRepository.findCamerasForAccessory(product.getId());
         }
-        if (category.equals(LENS)){
+
+        if (category.equals(LENS)) {
             return productRepository.findByMountIdAndCategoryName(product.getMount().getId(), CAMERA);
         }
-        if (category.equals(CAMERA)){
+
+        if (category.equals(CAMERA)) {
             List<Product> result = new ArrayList<>();
-            if (product.getMount() != null){
+            if (product.getMount() != null) {
                 result.addAll(productRepository.findByMountIdAndCategoryName(product.getMount().getId(), LENS));
             }
             result.addAll(productRepository.findByCompatibleCamerasId(product.getId()));
