@@ -7,15 +7,14 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.camerashop.dto.common.PageDTO;
 import com.camerashop.dto.product.ProductDetailDTO;
 import com.camerashop.dto.product.ProductSummaryDTO;
 import com.camerashop.dto.product.VariantDTO;
 import com.camerashop.entity.Product;
+import com.camerashop.exception.NotFoundException;
 import com.camerashop.repository.ProductRepository;
 import com.camerashop.repository.ProductSpecification;
 import com.camerashop.repository.ProductVariantRepository;
@@ -47,7 +46,7 @@ public class ProductService {
 
     public ProductDetailDTO getDetail(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm " + id));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm " + id));
 
         List<VariantDTO> variants = productVariantRepository.findByProductIdOrderByPriceAsc(id).stream()
                 .map(variant -> VariantDTO.from(variant))
