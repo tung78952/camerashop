@@ -16,9 +16,6 @@ import com.camerashop.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     @EntityGraph(attributePaths = {"brand", "category", "mount"})
-    Page<Product> findAll(Pageable pageable);
-
-    @EntityGraph(attributePaths = {"brand", "category", "mount"})
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
 
     @EntityGraph(attributePaths = {"brand", "category", "mount"})

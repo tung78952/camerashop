@@ -1,5 +1,6 @@
 package com.camerashop.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +33,12 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
 
-    public PageDTO<ProductSummaryDTO> getAll(Long brandId, Long categoryId, Long mountId, Pageable pageable) {
+    public PageDTO<ProductSummaryDTO> getAll(Long brandId, Long categoryId, Long mountId,
+                                             BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         Specification<Product> spec = ProductSpecification.hasBrand(brandId)
                 .and(ProductSpecification.hasCategory(categoryId))
-                .and(ProductSpecification.hasMount(mountId));
+                .and(ProductSpecification.hasMount(mountId))
+                .and(ProductSpecification.priceBetween(minPrice, maxPrice));
 
         Page<ProductSummaryDTO> page = productRepository.findAll(spec, pageable)
                 .map(product -> ProductSummaryDTO.from(product));

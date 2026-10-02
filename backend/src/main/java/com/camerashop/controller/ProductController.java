@@ -1,5 +1,7 @@
 package com.camerashop.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +29,10 @@ public class ProductController {
             @RequestParam(required = false) Long brandId,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long mountId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @PageableDefault(size = 12, sort = "id") Pageable pageable) {
-        return productService.getAll(brandId, categoryId, mountId, pageable);
+        return productService.getAll(brandId, categoryId, mountId, minPrice, maxPrice, pageable);
     }
 
     @GetMapping("/{id}")
