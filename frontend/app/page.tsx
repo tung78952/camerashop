@@ -1,7 +1,7 @@
 import Link from "next/link";
 
+import ProductCard from "@/components/ProductCard";
 import { getProducts } from "@/lib/api";
-import { formatPriceRange } from "@/lib/format";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const { page } = await searchParams;
@@ -16,21 +16,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {data.items.map((product) => (
-          <div key={product.id} className="rounded-lg border p-4">
-            <div className="mb-3 flex aspect-square items-center justify-center rounded bg-gray-100 text-sm text-gray-400">
-              Chưa có ảnh
-            </div>
-            <p className="text-xs text-gray-500">
-              {product.brand} · {product.category}
-            </p>
-            <h2 className="font-semibold">{product.name}</h2>
-            {product.mount && <p className="text-xs text-gray-500">Ngàm {product.mount}</p>}
-            {product.minPrice != null && product.maxPrice != null && (
-              <p className="mt-2 font-semibold text-red-600">
-                {formatPriceRange(product.minPrice, product.maxPrice)}
-              </p>
-            )}
-          </div>
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
