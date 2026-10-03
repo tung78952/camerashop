@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getProducts } from "@/lib/api";
+import { formatPriceRange } from "@/lib/format";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const { page } = await searchParams;
@@ -24,6 +25,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             </p>
             <h2 className="font-semibold">{product.name}</h2>
             {product.mount && <p className="text-xs text-gray-500">Ngàm {product.mount}</p>}
+            {product.minPrice != null && product.maxPrice != null && (
+              <p className="mt-2 font-semibold text-red-600">
+                {formatPriceRange(product.minPrice, product.maxPrice)}
+              </p>
+            )}
           </div>
         ))}
       </div>

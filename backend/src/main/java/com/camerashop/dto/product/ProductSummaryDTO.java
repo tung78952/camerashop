@@ -1,5 +1,7 @@
 package com.camerashop.dto.product;
 
+import java.math.BigDecimal;
+
 import com.camerashop.entity.Product;
 
 public record ProductSummaryDTO(
@@ -8,15 +10,19 @@ public record ProductSummaryDTO(
         String brand,
         String category,
         String mount,
-        String imageUrl) {
+        String imageUrl,
+        BigDecimal minPrice,
+        BigDecimal maxPrice) {
 
-    public static ProductSummaryDTO from(Product product) {
+    public static ProductSummaryDTO from(Product product, BigDecimal minPrice, BigDecimal maxPrice) {
         return new ProductSummaryDTO(
                 product.getId(),
                 product.getName(),
                 product.getBrand().getName(),
                 product.getCategory().getName(),
                 product.getMount() == null ? null : product.getMount().getName(),
-                product.getImageUrl());
+                product.getImageUrl(),
+                minPrice,
+                maxPrice);
     }
 }

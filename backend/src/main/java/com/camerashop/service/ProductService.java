@@ -3,6 +3,8 @@ package com.camerashop.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import com.camerashop.exception.NotFoundException;
 import com.camerashop.repository.ProductRepository;
 import com.camerashop.repository.ProductSpecification;
 import com.camerashop.repository.ProductVariantRepository;
+import com.camerashop.repository.ProductVariantRepository.PriceRangeRow;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,8 +42,10 @@ public class ProductService {
                 .and(ProductSpecification.hasMount(mountId))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice));
 
-        Page<ProductSummaryDTO> page = productRepository.findAll(spec, pageable)
-                .map(product -> ProductSummaryDTO.from(product));
+        Page<Product> products = productRepository.findAll(spec, pageable);
+        Map<Long, PriceRangeRow> priceRanges = findPriceRanges(products.getContent());
+
+        Page<ProductSummaryDTO> page = products.map(product -> toSummary(product, priceRanges));
         return PageDTO.from(page);
     }
 
@@ -52,11 +57,29 @@ public class ProductService {
                 .map(variant -> VariantDTO.from(variant))
                 .toList();
 
-        List<ProductSummaryDTO> compatible = findCompatibleProducts(product).stream()
-                .map(p -> ProductSummaryDTO.from(p))
+        List<Product> compatibleProducts = findCompatibleProducts(product);
+        Map<Long, PriceRangeRow> priceRanges = findPriceRanges(compatibleProducts);
+        List<ProductSummaryDTO> compatible = compatibleProducts.stream()
+                .map(p -> toSummary(p, priceRanges))
                 .toList();
 
         return ProductDetailDTO.from(product, variants, compatible);
+    }
+
+    private Map<Long, PriceRangeRow> findPriceRanges(List<Product> products) {
+        if (products.isEmpty()) {
+            return Map.of();
+        }
+        List<Long> ids = products.stream().map(p -> p.getId()).toList();
+        return productVariantRepository.findPriceRanges(ids).stream()
+                .collect(Collectors.toMap(row -> row.getProductId(), row -> row));
+    }
+
+    private ProductSummaryDTO toSummary(Product product, Map<Long, PriceRangeRow> priceRanges) {
+        PriceRangeRow range = priceRanges.get(product.getId());
+        BigDecimal minPrice = range == null ? null : range.getMinPrice();
+        BigDecimal maxPrice = range == null ? null : range.getMaxPrice();
+        return ProductSummaryDTO.from(product, minPrice, maxPrice);
     }
 
     private List<Product> findCompatibleProducts(Product product) {

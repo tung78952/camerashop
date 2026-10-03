@@ -7,6 +7,8 @@ export type ProductSummary = {
   category: string;
   mount: string | null;
   imageUrl: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
 };
 
 export type Page<T> = {
