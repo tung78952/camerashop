@@ -41,6 +41,16 @@ public class ProductSpecification {
         };
     }
 
+    public static Specification<Product> nameContains(String keyword) {
+        return (root, query, cb) -> {
+            if (keyword == null || keyword.isBlank()) {
+                return cb.conjunction();
+            }
+            String pattern = "%" + keyword.trim().toLowerCase() + "%";
+            return cb.like(cb.lower(root.get("name")), pattern);
+        };
+    }
+
     public static Specification<Product> priceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, cb) -> {
             if (minPrice == null && maxPrice == null) {

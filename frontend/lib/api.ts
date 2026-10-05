@@ -81,6 +81,7 @@ export type FilterOptions = {
 };
 
 export type ProductQuery = {
+  q?: string;
   page?: number;
   brandId?: string;
   categoryId?: string;
@@ -93,6 +94,7 @@ export type ProductQuery = {
 
 export async function getProducts(query: ProductQuery): Promise<Page<ProductSummary>> {
   const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
   if (query.brandId) params.set("brandId", query.brandId);
   if (query.categoryId) params.set("categoryId", query.categoryId);
   if (query.mountId) params.set("mountId", query.mountId);

@@ -7,7 +7,7 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
   return (
     <Link
       href={`/products/${product.id}`}
-      className="block rounded-lg border p-4 transition hover:border-red-500 hover:shadow-md"
+      className="block rounded-lg border bg-white p-4 transition hover:border-red-500 hover:shadow-md"
     >
       <div className="mb-3 flex aspect-square items-center justify-center rounded bg-gray-100 text-sm text-gray-400">
         Chưa có ảnh

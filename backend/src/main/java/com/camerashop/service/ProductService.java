@@ -39,10 +39,11 @@ public class ProductService {
     private static final String PRICE_ASC = "price_asc";
     private static final String PRICE_DESC = "price_desc";
 
-    public PageDTO<ProductSummaryDTO> getAll(Long brandId, Long categoryId, Long mountId,
+    public PageDTO<ProductSummaryDTO> getAll(String keyword, Long brandId, Long categoryId, Long mountId,
                                              BigDecimal minPrice, BigDecimal maxPrice,
                                              String order, Pageable pageable) {
-        Specification<Product> spec = ProductSpecification.hasBrand(brandId)
+        Specification<Product> spec = ProductSpecification.nameContains(keyword)
+                .and(ProductSpecification.hasBrand(brandId))
                 .and(ProductSpecification.hasCategory(categoryId))
                 .and(ProductSpecification.hasMount(mountId))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice));

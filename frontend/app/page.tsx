@@ -7,6 +7,7 @@ import { getFilterOptions, getProducts } from "@/lib/api";
 export default async function Home({ searchParams }: PageProps<"/">) {
   const url = await searchParams;
   const selected: SelectedFilters = {
+    q: readParam(url.q),
     brandId: readParam(url.brandId),
     categoryId: readParam(url.categoryId),
     mountId: readParam(url.mountId),
@@ -28,7 +29,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="mx-auto w-full max-w-7xl p-6">
-      <h1 className="mb-6 text-3xl font-bold">CameraShop</h1>
+      <h1 className="mb-6 text-2xl font-bold">
+        {selected.q ? `Kết quả tìm kiếm: "${selected.q}"` : "Tất cả sản phẩm"}
+      </h1>
 
       <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
         <aside>
@@ -75,6 +78,7 @@ function readParam(value: string | string[] | undefined): string | undefined {
 
 function pageLink(selected: SelectedFilters, page: number): string {
   const params = new URLSearchParams();
+  if (selected.q) params.set("q", selected.q);
   if (selected.brandId) params.set("brandId", selected.brandId);
   if (selected.categoryId) params.set("categoryId", selected.categoryId);
   if (selected.mountId) params.set("mountId", selected.mountId);

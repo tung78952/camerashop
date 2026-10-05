@@ -26,6 +26,7 @@ public class ProductController {
 
     @GetMapping
     public PageDTO<ProductSummaryDTO> getAll(
+            @RequestParam(required = false) String q,
             @RequestParam(required = false) Long brandId,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long mountId,
@@ -33,7 +34,7 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String order,
             @PageableDefault(size = 12, sort = "id") Pageable pageable) {
-        return productService.getAll(brandId, categoryId, mountId, minPrice, maxPrice, order, pageable);
+        return productService.getAll(q, brandId, categoryId, mountId, minPrice, maxPrice, order, pageable);
     }
 
     @GetMapping("/{id}")

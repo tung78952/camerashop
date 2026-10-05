@@ -11,6 +11,7 @@ export const PRICE_RANGES = [
 ];
 
 export type SelectedFilters = {
+  q?: string;
   brandId?: string;
   categoryId?: string;
   mountId?: string;
@@ -21,6 +22,8 @@ export type SelectedFilters = {
 export default function FilterSidebar({ options, selected }: { options: FilterOptions; selected: SelectedFilters }) {
   return (
     <form method="get" action="/" className="space-y-4">
+      {selected.q && <input type="hidden" name="q" value={selected.q} />}
+
       <FilterBox title="Sắp xếp">
         <select name="order" defaultValue={selected.order ?? ""} className="w-full rounded border px-2 py-1.5 text-sm">
           <option value="">Mặc định</option>
@@ -53,7 +56,7 @@ export default function FilterSidebar({ options, selected }: { options: FilterOp
 
 function FilterBox({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-lg border bg-white p-4">
       <h3 className="mb-3 border-b-2 border-red-600 pb-2 text-sm font-bold uppercase">{title}</h3>
       <div className="space-y-1.5">{children}</div>
     </div>
