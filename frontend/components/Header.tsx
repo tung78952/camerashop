@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { Option } from "@/lib/api";
 
-export default function Header({ categories }: { categories: Option[] }) {
+export default function Header({ categories, cartCount }: { categories: Option[]; cartCount: number }) {
   return (
     <header className="sticky top-0 z-10 bg-white shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-6 py-3">
@@ -23,7 +23,14 @@ export default function Header({ categories }: { categories: Option[] }) {
         </form>
 
         <Link href="/cart" className="flex shrink-0 items-center gap-2 text-sm font-medium hover:text-red-600">
-          <CartIcon />
+          <span className="relative">
+            <CartIcon />
+            {cartCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
+          </span>
           <span className="hidden sm:inline">Giỏ hàng</span>
         </Link>
       </div>

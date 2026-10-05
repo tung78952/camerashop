@@ -1,4 +1,6 @@
-const API_URL = process.env.API_URL ?? "http://localhost:8080";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+
+const DEMO_USER_ID = "1";
 
 
 type ErrorBody = {
@@ -15,8 +17,16 @@ export class ApiError extends Error {
   }
 }
 
-async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`);
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": DEMO_USER_ID,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    cache: "no-store",
+  });
   if (!res.ok) {
     let message = `Lỗi HTTP ${res.status}`;
     try {
@@ -80,6 +90,24 @@ export type FilterOptions = {
   mounts: Option[];
 };
 
+export type CartItem = {
+  id: number;
+  productId: number;
+  productName: string;
+  variantName: string;
+  imageUrl: string | null;
+  unitPrice: number;
+  quantity: number;
+  stock: number;
+  lineTotal: number;
+};
+
+export type Cart = {
+  items: CartItem[];
+  totalQuantity: number;
+  totalAmount: number;
+};
+
 export type ProductQuery = {
   q?: string;
   page?: number;
@@ -103,12 +131,12 @@ export async function getProducts(query: ProductQuery): Promise<Page<ProductSumm
   if (query.order) params.set("order", query.order);
   params.set("page", String(query.page ?? 0));
 
-  return getJson<Page<ProductSummary>>(`/api/products?${params}`);
+  return request<Page<ProductSummary>>("GET", `/api/products?${params}`);
 }
 
 export async function getProductDetail(id: string): Promise<ProductDetail | null> {
   try {
-    return await getJson<ProductDetail>(`/api/products/${id}`);
+    return await request<ProductDetail>("GET", `/api/products/${id}`);
   } catch (error) {
     if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
       return null;
@@ -118,5 +146,22 @@ export async function getProductDetail(id: string): Promise<ProductDetail | null
 }
 
 export async function getFilterOptions(): Promise<FilterOptions> {
-  return getJson<FilterOptions>("/api/filters");
+  return request<FilterOptions>("GET", "/api/filters");
+}
+
+
+export async function getCart(): Promise<Cart> {
+  return request<Cart>("GET", "/api/cart");
+}
+
+export async function addCartItem(variantId: number, quantity: number): Promise<Cart> {
+  return request<Cart>("POST", "/api/cart/items", { variantId, quantity });
+}
+
+export async function updateCartItem(itemId: number, quantity: number): Promise<Cart> {
+  return request<Cart>("PATCH", `/api/cart/items/${itemId}`, { quantity });
+}
+
+export async function removeCartItem(itemId: number): Promise<Cart> {
+  return request<Cart>("DELETE", `/api/cart/items/${itemId}`);
 }
