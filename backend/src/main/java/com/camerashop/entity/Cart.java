@@ -39,4 +39,8 @@ public class Cart {
     public Cart(User user) {
         this.user = user;
     }
+
+    public void addItem(ProductVariant productVariant, Integer quantity) {
+        items.add(new CartItem(this, productVariant, quantity));
+    }
 }
