@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,21 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
 
+    private static final String PRICE_ASC = "price_asc";
+    private static final String PRICE_DESC = "price_desc";
+
     public PageDTO<ProductSummaryDTO> getAll(Long brandId, Long categoryId, Long mountId,
-                                             BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+                                             BigDecimal minPrice, BigDecimal maxPrice,
+                                             String order, Pageable pageable) {
         Specification<Product> spec = ProductSpecification.hasBrand(brandId)
                 .and(ProductSpecification.hasCategory(categoryId))
                 .and(ProductSpecification.hasMount(mountId))
                 .and(ProductSpecification.priceBetween(minPrice, maxPrice));
+
+        if (PRICE_ASC.equals(order) || PRICE_DESC.equals(order)) {
+            spec = spec.and(ProductSpecification.orderByMinPrice(PRICE_ASC.equals(order)));
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
 
         Page<Product> products = productRepository.findAll(spec, pageable);
         Map<Long, PriceRangeRow> priceRanges = findPriceRanges(products.getContent());

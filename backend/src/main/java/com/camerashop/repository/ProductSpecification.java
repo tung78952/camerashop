@@ -65,4 +65,18 @@ public class ProductSpecification {
             return cb.exists(sub);
         };
     }
+
+    public static Specification<Product> orderByMinPrice(boolean ascending) {
+        return (root, query, cb) -> {
+            if (query.getResultType() != Long.class) {
+                Subquery<BigDecimal> minPrice = query.subquery(BigDecimal.class);
+                Root<ProductVariant> variant = minPrice.from(ProductVariant.class);
+                Path<BigDecimal> price = variant.get("price");
+                minPrice.select(cb.min(price)).where(cb.equal(variant.get("product"), root));
+
+                query.orderBy(ascending ? cb.asc(minPrice) : cb.desc(minPrice), cb.asc(root.get("id")));
+            }
+            return cb.conjunction();
+        };
+    }
 }

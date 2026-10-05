@@ -31,8 +31,9 @@ public class ProductController {
             @RequestParam(required = false) Long mountId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String order,
             @PageableDefault(size = 12, sort = "id") Pageable pageable) {
-        return productService.getAll(brandId, categoryId, mountId, minPrice, maxPrice, pageable);
+        return productService.getAll(brandId, categoryId, mountId, minPrice, maxPrice, order, pageable);
     }
 
     @GetMapping("/{id}")
