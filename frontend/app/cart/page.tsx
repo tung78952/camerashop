@@ -35,13 +35,12 @@ export default async function CartPage() {
             <span className="text-gray-600">Tạm tính</span>
             <span className="text-xl font-bold text-red-600">{formatPrice(cart.totalAmount)}</span>
           </div>
-          <button
-            type="button"
-            disabled
-            className="w-full rounded bg-red-600 py-3 font-semibold uppercase text-white opacity-50"
+          <Link
+            href="/checkout"
+            className="block w-full rounded bg-red-600 py-3 text-center font-semibold uppercase text-white hover:bg-red-700"
           >
-            Đặt hàng (sắp có)
-          </button>
+            Đặt hàng
+          </Link>
           <Link href="/" className="block text-center text-sm text-gray-500 hover:text-red-600">
             ← Tiếp tục mua sắm
           </Link>

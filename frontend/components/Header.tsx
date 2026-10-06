@@ -22,6 +22,10 @@ export default function Header({ categories, cartCount }: { categories: Option[]
           </button>
         </form>
 
+        <Link href="/orders" className="hidden shrink-0 text-sm font-medium hover:text-red-600 sm:inline">
+          Đơn hàng
+        </Link>
+
         <Link href="/cart" className="flex shrink-0 items-center gap-2 text-sm font-medium hover:text-red-600">
           <span className="relative">
             <CartIcon />

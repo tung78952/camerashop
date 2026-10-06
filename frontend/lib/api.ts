@@ -108,6 +108,34 @@ export type Cart = {
   totalAmount: number;
 };
 
+export type OrderItem = {
+  productId: number;
+  productName: string;
+  variantName: string;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+};
+
+export type OrderStatus = "PENDING" | "SHIPPING" | "COMPLETED" | "CANCELLED";
+
+export type Order = {
+  id: number;
+  status: OrderStatus;
+  totalAmount: number;
+  receiverName: string;
+  phone: string;
+  address: string;
+  createdAt: string;
+  items: OrderItem[];
+};
+
+export type CreateOrderInput = {
+  receiverName: string;
+  phone: string;
+  address: string;
+};
+
 export type ProductQuery = {
   q?: string;
   page?: number;
@@ -164,4 +192,24 @@ export async function updateCartItem(itemId: number, quantity: number): Promise<
 
 export async function removeCartItem(itemId: number): Promise<Cart> {
   return request<Cart>("DELETE", `/api/cart/items/${itemId}`);
+}
+
+
+export async function placeOrder(input: CreateOrderInput): Promise<Order> {
+  return request<Order>("POST", "/api/orders", input);
+}
+
+export async function getMyOrders(): Promise<Order[]> {
+  return request<Order[]>("GET", "/api/orders");
+}
+
+export async function getMyOrder(id: string): Promise<Order | null> {
+  try {
+    return await request<Order>("GET", `/api/orders/${id}`);
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
+      return null;
+    }
+    throw error;
+  }
 }
