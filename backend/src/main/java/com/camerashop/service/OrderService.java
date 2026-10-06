@@ -12,6 +12,8 @@ import com.camerashop.dto.order.OrderDTO;
 import com.camerashop.entity.Cart;
 import com.camerashop.entity.CartItem;
 import com.camerashop.entity.Order;
+import com.camerashop.entity.OrderItem;
+import com.camerashop.entity.OrderStatus;
 import com.camerashop.entity.ProductVariant;
 import com.camerashop.exception.BadRequestException;
 import com.camerashop.exception.NotFoundException;
@@ -78,5 +80,55 @@ public class OrderService {
         return orderRepository.findByIdAndUserId(orderId, userId)
                 .map(order -> OrderDTO.from(order))
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
+    }
+
+    @Transactional
+    public OrderDTO cancelMyOrder(Long userId, Long orderId) {
+        Order order = orderRepository.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
+        return changeStatus(order, OrderStatus.CANCELLED);
+    }
+
+    @Transactional
+    public OrderDTO changeStatusByAdmin(Long orderId, OrderStatus next) {
+        Order order = orderRepository.findWithItemsById(orderId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
+        return changeStatus(order, next);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getAllOrders() {
+        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(order -> OrderDTO.from(order))
+                .toList();
+    }
+
+    private OrderDTO changeStatus(Order order, OrderStatus next) {
+        OrderStatus current = order.getStatus();
+
+        if (!current.canChangeTo(next)) {
+            throw new BadRequestException("Không thể chuyển đơn từ \"" + current.getLabel()
+                    + "\" sang \"" + next.getLabel() + "\"");
+        }
+
+        List<OrderItem> itemsToRestock = next == OrderStatus.CANCELLED ? List.copyOf(order.getItems()) : List.of();
+        List<RestockLine> restock = itemsToRestock.stream()
+                .map(item -> new RestockLine(item.getProductVariant().getId(), item.getQuantity()))
+                .toList();
+
+        int updated = orderRepository.updateStatus(order.getId(), current, next);
+        if (updated == 0) {
+            throw new BadRequestException("Đơn hàng vừa được cập nhật, vui lòng tải lại trang");
+        }
+
+        for (RestockLine line : restock) {
+            productVariantRepository.increaseStock(line.variantId(), line.quantity());
+        }
+
+        Order reloaded = orderRepository.findWithItemsById(order.getId()).orElseThrow();
+        return OrderDTO.from(reloaded);
+    }
+
+    private record RestockLine(Long variantId, int quantity) {
     }
 }

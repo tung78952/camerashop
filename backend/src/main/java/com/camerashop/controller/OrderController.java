@@ -40,6 +40,12 @@ public class OrderController {
         return orderService.getMyOrders(userId);
     }
 
+    @PostMapping("/{orderId}/cancel")
+    public OrderDTO cancelMyOrder(@RequestHeader(USER_HEADER) Long userId,
+                                  @PathVariable Long orderId) {
+        return orderService.cancelMyOrder(userId, orderId);
+    }
+
     @GetMapping("/{orderId}")
     public OrderDTO getMyOrder(@RequestHeader(USER_HEADER) Long userId,
                                @PathVariable Long orderId) {
