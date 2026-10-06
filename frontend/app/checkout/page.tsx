@@ -1,11 +1,16 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getCart } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
+import { getSession } from "@/lib/session";
 
 import CheckoutForm from "./CheckoutForm";
 
 export default async function CheckoutPage() {
+  if (!(await getSession())) {
+    redirect("/login?next=/checkout");
+  }
   const cart = await getCart();
 
   if (cart.items.length === 0) {

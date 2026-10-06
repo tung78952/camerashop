@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { ApiError, changeOrderStatus, type OrderStatus } from "@/lib/api";
+import { changeOrderStatusAction } from "@/lib/actions";
+import type { OrderStatus } from "@/lib/api";
 
 const NEXT_ACTIONS: Record<OrderStatus, { to: OrderStatus; label: string; style: string }[]> = {
   PENDING: [
@@ -18,18 +18,14 @@ const NEXT_ACTIONS: Record<OrderStatus, { to: OrderStatus; label: string; style:
 export default function StatusActions({ orderId, status }: { orderId: number; status: OrderStatus }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   async function changeTo(next: OrderStatus) {
     setLoading(true);
     setError(null);
-    try {
-      await changeOrderStatus(orderId, next);
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Không kết nối được máy chủ");
-    } finally {
-      setLoading(false);
+    const result = await changeOrderStatusAction(orderId, next);
+    setLoading(false);
+    if (!result.ok) {
+      setError(result.error);
     }
   }
 

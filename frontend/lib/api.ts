@@ -1,6 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+import { getSession } from "@/lib/session";
 
-const DEMO_USER_ID = "1";
+const API_URL = process.env.API_URL ?? "http://localhost:8080";
 
 
 type ErrorBody = {
@@ -18,12 +18,15 @@ export class ApiError extends Error {
 }
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const session = await getSession();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (session) {
+    headers["Authorization"] = `Bearer ${session.token}`;
+  }
+
   const res = await fetch(`${API_URL}${path}`, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": DEMO_USER_ID,
-    },
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: "no-store",
   });
@@ -136,6 +139,19 @@ export type CreateOrderInput = {
   address: string;
 };
 
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: "CUSTOMER" | "ADMIN";
+};
+
+export type AuthResponse = {
+  token: string;
+  expiresAt: string;
+  user: User;
+};
+
 export type ProductQuery = {
   q?: string;
   page?: number;
@@ -175,6 +191,15 @@ export async function getProductDetail(id: string): Promise<ProductDetail | null
 
 export async function getFilterOptions(): Promise<FilterOptions> {
   return request<FilterOptions>("GET", "/api/filters");
+}
+
+
+export async function login(email: string, password: string): Promise<AuthResponse> {
+  return request<AuthResponse>("POST", "/api/auth/login", { email, password });
+}
+
+export async function register(name: string, email: string, password: string): Promise<AuthResponse> {
+  return request<AuthResponse>("POST", "/api/auth/register", { name, email, password });
 }
 
 

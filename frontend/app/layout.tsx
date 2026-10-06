@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getCart, getFilterOptions, type Option } from "@/lib/api";
+import { getSession } from "@/lib/session";
 
 import "./globals.css";
 
@@ -30,11 +31,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     categories = [];
   }
 
+  const session = await getSession();
+
   let cartCount = 0;
-  try {
-    cartCount = (await getCart()).totalQuantity;
-  } catch {
-    cartCount = 0;
+  if (session) {
+    try {
+      cartCount = (await getCart()).totalQuantity;
+    } catch {
+      cartCount = 0;
+    }
   }
 
   return (
@@ -43,7 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-neutral-50">
-        <Header categories={categories} cartCount={cartCount} />
+        <Header categories={categories} cartCount={cartCount} session={session} />
         <div className="flex flex-1 flex-col">{children}</div>
         <Footer />
       </body>

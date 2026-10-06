@@ -1,28 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import QuantityStepper from "@/components/QuantityStepper";
-import { ApiError, removeCartItem, updateCartItem, type CartItem } from "@/lib/api";
+import { removeCartItemAction, updateCartItemAction, type ActionResult } from "@/lib/actions";
+import type { CartItem } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
 
 export default function CartItemRow({ item }: { item: CartItem }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
-  async function run(action: () => Promise<unknown>) {
+  async function run(action: () => Promise<ActionResult>) {
     setLoading(true);
     setError(null);
-    try {
-      await action();
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Không kết nối được máy chủ, vui lòng thử lại");
-    } finally {
-      setLoading(false);
+    const result = await action();
+    setLoading(false);
+    if (!result.ok) {
+      setError(result.error);
     }
   }
 
@@ -44,14 +40,14 @@ export default function CartItemRow({ item }: { item: CartItem }) {
         value={item.quantity}
         max={item.stock}
         disabled={loading}
-        onChange={(newQuantity) => run(() => updateCartItem(item.id, newQuantity))}
+        onChange={(newQuantity) => run(() => updateCartItemAction(item.id, newQuantity))}
       />
 
       <p className="w-32 text-right font-semibold text-red-600">{formatPrice(item.lineTotal)}</p>
 
       <button
         type="button"
-        onClick={() => run(() => removeCartItem(item.id))}
+        onClick={() => run(() => removeCartItemAction(item.id))}
         disabled={loading}
         className="text-sm text-gray-400 hover:text-red-600 disabled:opacity-40"
       >

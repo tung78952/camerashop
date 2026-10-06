@@ -1,8 +1,18 @@
 import Link from "next/link";
 
+import LogoutButton from "@/components/LogoutButton";
 import type { Option } from "@/lib/api";
+import type { Session } from "@/lib/session";
 
-export default function Header({ categories, cartCount }: { categories: Option[]; cartCount: number }) {
+export default function Header({
+  categories,
+  cartCount,
+  session,
+}: {
+  categories: Option[];
+  cartCount: number;
+  session: Session | null;
+}) {
   return (
     <header className="sticky top-0 z-10 bg-white shadow-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-6 py-3">
@@ -22,9 +32,20 @@ export default function Header({ categories, cartCount }: { categories: Option[]
           </button>
         </form>
 
-        <Link href="/orders" className="hidden shrink-0 text-sm font-medium hover:text-red-600 sm:inline">
-          Đơn hàng
-        </Link>
+        {session ? (
+          <div className="hidden shrink-0 items-center gap-4 text-sm sm:flex">
+            <span className="font-medium">Xin chào, {session.name}</span>
+            {session.role === "ADMIN" && (
+              <Link href="/admin/orders" className="font-semibold text-red-600 hover:underline">Quản trị</Link>
+            )}
+            <Link href="/orders" className="font-medium hover:text-red-600">Đơn hàng</Link>
+            <LogoutButton />
+          </div>
+        ) : (
+          <Link href="/login" className="shrink-0 text-sm font-medium hover:text-red-600">
+            Đăng nhập
+          </Link>
+        )}
 
         <Link href="/cart" className="flex shrink-0 items-center gap-2 text-sm font-medium hover:text-red-600">
           <span className="relative">

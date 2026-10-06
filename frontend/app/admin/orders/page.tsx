@@ -1,11 +1,27 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getAllOrdersAdmin } from "@/lib/api";
 import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+import { getSession } from "@/lib/session";
 
 import StatusActions from "./StatusActions";
 
 export default async function AdminOrdersPage() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login?next=/admin/orders");
+  }
+  if (session.role !== "ADMIN") {
+    return (
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+        <h1 className="text-2xl font-bold">403 – Không có quyền</h1>
+        <p className="text-gray-500">Trang này chỉ dành cho quản trị viên.</p>
+        <Link href="/" className="text-red-600 hover:underline">Về trang chủ</Link>
+      </main>
+    );
+  }
+
   const orders = await getAllOrdersAdmin();
 
   return (

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-import { ApiError, placeOrder } from "@/lib/api";
+import { placeOrderAction } from "@/lib/actions";
 
 export default function CheckoutForm() {
   const [error, setError] = useState<string | null>(null);
@@ -15,16 +15,17 @@ export default function CheckoutForm() {
     const form = new FormData(event.currentTarget);
     setLoading(true);
     setError(null);
-    try {
-      const order = await placeOrder({
-        receiverName: String(form.get("receiverName") ?? ""),
-        phone: String(form.get("phone") ?? ""),
-        address: String(form.get("address") ?? ""),
-      });
-      router.push(`/orders/${order.id}?success=1`);
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Không kết nối được máy chủ, vui lòng thử lại");
+    const result = await placeOrderAction({
+      receiverName: String(form.get("receiverName") ?? ""),
+      phone: String(form.get("phone") ?? ""),
+      address: String(form.get("address") ?? ""),
+    });
+    if (result.ok) {
+      router.push(`/orders/${result.data}?success=1`);
+    } else if (result.needLogin) {
+      router.push("/login?next=/checkout");
+    } else {
+      setError(result.error);
       setLoading(false);
     }
   }

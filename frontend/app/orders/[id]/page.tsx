@@ -1,14 +1,18 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { getMyOrder } from "@/lib/api";
 import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+import { getSession } from "@/lib/session";
 
 import CancelOrderButton from "./CancelOrderButton";
 
 export default async function OrderDetailPage({ params, searchParams }: PageProps<"/orders/[id]">) {
   const { id } = await params;
   const { success } = await searchParams;
+  if (!(await getSession())) {
+    redirect(`/login?next=/orders/${id}`);
+  }
   const order = await getMyOrder(id);
 
   if (!order) {

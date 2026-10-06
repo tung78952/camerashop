@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getMyOrders } from "@/lib/api";
 import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+import { getSession } from "@/lib/session";
 
 export default async function MyOrdersPage() {
+  if (!(await getSession())) {
+    redirect("/login?next=/orders");
+  }
   const orders = await getMyOrders();
 
   return (

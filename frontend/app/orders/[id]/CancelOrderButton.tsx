@@ -1,14 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { ApiError, cancelOrder } from "@/lib/api";
+import { cancelOrderAction } from "@/lib/actions";
 
 export default function CancelOrderButton({ orderId }: { orderId: number }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   async function handleCancel() {
     if (!window.confirm(`Bạn chắc chắn muốn hủy đơn #${orderId}?`)) {
@@ -16,13 +14,10 @@ export default function CancelOrderButton({ orderId }: { orderId: number }) {
     }
     setLoading(true);
     setError(null);
-    try {
-      await cancelOrder(orderId);
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Không kết nối được máy chủ, vui lòng thử lại");
-    } finally {
-      setLoading(false);
+    const result = await cancelOrderAction(orderId);
+    setLoading(false);
+    if (!result.ok) {
+      setError(result.error);
     }
   }
 

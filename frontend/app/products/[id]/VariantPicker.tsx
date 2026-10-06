@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import QuantityStepper from "@/components/QuantityStepper";
-import { addCartItem, ApiError, type Variant } from "@/lib/api";
+import { addToCartAction } from "@/lib/actions";
+import type { Variant } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
 
 export default function VariantPicker({ variants }: { variants: Variant[] }) {
@@ -14,6 +15,7 @@ export default function VariantPicker({ variants }: { variants: Variant[] }) {
   const [message, setMessage] = useState<Message | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   if (!selected) {
     return <p className="text-gray-500">Sản phẩm tạm ngừng kinh doanh</p>;
@@ -31,15 +33,14 @@ export default function VariantPicker({ variants }: { variants: Variant[] }) {
     if (!selected) return;
     setLoading(true);
     setMessage(null);
-    try {
-      await addCartItem(selected.id, quantity);
+    const result = await addToCartAction(selected.id, quantity);
+    setLoading(false);
+    if (result.ok) {
       setMessage({ ok: true, text: "Đã thêm vào giỏ hàng" });
-      router.refresh();
-    } catch (error) {
-      const text = error instanceof ApiError ? error.message : "Không kết nối được máy chủ, vui lòng thử lại";
-      setMessage({ ok: false, text });
-    } finally {
-      setLoading(false);
+    } else if (result.needLogin) {
+      router.push(`/login?next=${encodeURIComponent(pathname)}`);
+    } else {
+      setMessage({ ok: false, text: result.error });
     }
   }
 
