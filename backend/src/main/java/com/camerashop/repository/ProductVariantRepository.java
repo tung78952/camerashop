@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.camerashop.entity.ProductVariant;
@@ -25,4 +26,12 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
             GROUP BY v.product.id
             """)
     List<PriceRangeRow> findPriceRanges(List<Long> productIds);
+
+    @Modifying
+    @Query("""
+            UPDATE ProductVariant v
+            SET v.stock = v.stock - :quantity
+            WHERE v.id = :variantId AND v.stock >= :quantity
+            """)
+    int decreaseStock(Long variantId, int quantity);
 }
