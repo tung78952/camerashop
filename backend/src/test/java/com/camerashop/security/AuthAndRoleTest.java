@@ -36,6 +36,13 @@ class AuthAndRoleTest {
     }
 
     @Test
+    void apiDocsArePublic() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/auth/login']").exists());
+    }
+
+    @Test
     void cartRequiresLogin() throws Exception {
         mockMvc.perform(get("/api/cart"))
                 .andExpect(status().isUnauthorized())
