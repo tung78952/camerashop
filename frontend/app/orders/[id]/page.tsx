@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getMyOrder } from "@/lib/api";
-import { formatDateTime, formatOrderStatus, formatPrice } from "@/lib/format";
+import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+
+import CancelOrderButton from "./CancelOrderButton";
 
 export default async function OrderDetailPage({ params, searchParams }: PageProps<"/orders/[id]">) {
   const { id } = await params;
@@ -24,11 +26,17 @@ export default async function OrderDetailPage({ params, searchParams }: PageProp
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Đơn hàng #{order.id}</h1>
-        <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+        <span className={`rounded-full px-3 py-1 text-sm font-medium ${orderStatusColor(order.status)}`}>
           {formatOrderStatus(order.status)}
         </span>
       </div>
       <p className="mb-6 text-sm text-gray-500">Đặt lúc {formatDateTime(order.createdAt)}</p>
+
+      {order.status === "PENDING" && (
+        <div className="mb-6">
+          <CancelOrderButton orderId={order.id} />
+        </div>
+      )}
 
       <section className="mb-6 rounded-lg border bg-white p-5 text-sm">
         <h2 className="mb-2 font-semibold">Giao đến</h2>

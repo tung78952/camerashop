@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { getMyOrders } from "@/lib/api";
-import { formatDateTime, formatOrderStatus, formatPrice } from "@/lib/format";
+import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
 
 export default async function MyOrdersPage() {
   const orders = await getMyOrders();
@@ -25,7 +25,7 @@ export default async function MyOrdersPage() {
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-semibold">Đơn #{order.id}</span>
-                <span className="rounded-full bg-yellow-100 px-3 py-0.5 text-xs font-medium text-yellow-800">
+                <span className={`rounded-full px-3 py-0.5 text-xs font-medium ${orderStatusColor(order.status)}`}>
                   {formatOrderStatus(order.status)}
                 </span>
               </div>

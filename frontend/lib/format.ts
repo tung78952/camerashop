@@ -25,6 +25,17 @@ export function formatOrderStatus(status: string): string {
   return ORDER_STATUS_LABELS[status] ?? status;
 }
 
+const ORDER_STATUS_COLORS: Record<string, string> = {
+  PENDING: "bg-yellow-100 text-yellow-800",
+  SHIPPING: "bg-blue-100 text-blue-800",
+  COMPLETED: "bg-green-100 text-green-800",
+  CANCELLED: "bg-gray-200 text-gray-600",
+};
+
+export function orderStatusColor(status: string): string {
+  return ORDER_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
+}
+
 export function formatPriceRange(min: number, max: number): string {
   if (min === max) {
     return formatPrice(min);

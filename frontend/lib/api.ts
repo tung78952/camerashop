@@ -203,6 +203,19 @@ export async function getMyOrders(): Promise<Order[]> {
   return request<Order[]>("GET", "/api/orders");
 }
 
+export async function cancelOrder(orderId: number): Promise<Order> {
+  return request<Order>("POST", `/api/orders/${orderId}/cancel`);
+}
+
+
+export async function getAllOrdersAdmin(): Promise<Order[]> {
+  return request<Order[]>("GET", "/api/admin/orders");
+}
+
+export async function changeOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
+  return request<Order>("PATCH", `/api/admin/orders/${orderId}/status`, { status });
+}
+
 export async function getMyOrder(id: string): Promise<Order | null> {
   try {
     return await request<Order>("GET", `/api/orders/${id}`);
