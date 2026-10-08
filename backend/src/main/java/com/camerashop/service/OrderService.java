@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import com.camerashop.entity.Order;
 import com.camerashop.entity.OrderItem;
 import com.camerashop.entity.OrderStatus;
 import com.camerashop.entity.ProductVariant;
+import com.camerashop.event.OrderPlacedEvent;
 import com.camerashop.exception.BadRequestException;
 import com.camerashop.exception.NotFoundException;
 import com.camerashop.exception.OutOfStockException;
@@ -31,6 +33,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public OrderDTO placeOrder(Long userId, CreateOrderDTO request) {
@@ -64,6 +67,8 @@ public class OrderService {
         orderRepository.save(order);
 
         cart.getItems().clear();
+
+        eventPublisher.publishEvent(new OrderPlacedEvent(order.getId()));
 
         return OrderDTO.from(order);
     }
