@@ -64,8 +64,7 @@ public class VnpayService {
         params.put("vnp_CreateDate", now.format(VNP_DATE));
         params.put("vnp_ExpireDate", now.plusMinutes(15).format(VNP_DATE));
 
-        String query = encode(params);
-        return payUrl + "?" + query + "&vnp_SecureHash=" + hmacSha512(hashSecret, query);
+        return payUrl + "?" + encode(params) + "&vnp_SecureHash=" + sign(params);
     }
 
     public boolean verify(Map<String, String> vnpParams) {
@@ -80,10 +79,14 @@ public class VnpayService {
                 fields.put(key, value);
             }
         });
-        String expectedHash = hmacSha512(hashSecret, encode(fields));
+        String expectedHash = sign(fields);
         return MessageDigest.isEqual(
                 expectedHash.getBytes(StandardCharsets.US_ASCII),
                 receivedHash.toLowerCase().getBytes(StandardCharsets.US_ASCII));
+    }
+
+    String sign(Map<String, String> params) {
+        return hmacSha512(hashSecret, encode(new TreeMap<>(params)));
     }
 
     private static String encode(Map<String, String> sortedParams) {

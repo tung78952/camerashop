@@ -17,6 +17,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.camerashop.entity.Order;
 import com.camerashop.entity.OrderItem;
+import com.camerashop.event.OrderPaidEvent;
 import com.camerashop.event.OrderPlacedEvent;
 import com.camerashop.repository.OrderRepository;
 
@@ -47,7 +48,19 @@ public class OrderMailListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public void onOrderPlaced(OrderPlacedEvent event) {
-        Order order = orderRepository.findWithItemsById(event.orderId()).orElse(null);
+        send(event.orderId(), "CameraShop – Xác nhận đơn hàng #", "CameraShop đã nhận đơn hàng #%d của bạn.");
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public void onOrderPaid(OrderPaidEvent event) {
+        send(event.orderId(), "CameraShop – Đã thanh toán đơn hàng #",
+                "CameraShop đã nhận được thanh toán VNPay cho đơn hàng #%d của bạn.");
+    }
+
+    private void send(Long orderId, String subjectPrefix, String intro) {
+        Order order = orderRepository.findWithItemsById(orderId).orElse(null);
         if (order == null) {
             return;
         }
@@ -56,19 +69,19 @@ public class OrderMailListener {
             SimpleMailMessage mail = new SimpleMailMessage();
             mail.setFrom(from);
             mail.setTo(to);
-            mail.setSubject("CameraShop – Xác nhận đơn hàng #" + order.getId());
-            mail.setText(buildBody(order));
+            mail.setSubject(subjectPrefix + order.getId());
+            mail.setText(buildBody(order, intro.formatted(order.getId())));
             mailSender.send(mail);
-            log.info("Đã gửi mail xác nhận đơn #{} tới {}", order.getId(), to);
+            log.info("Đã gửi mail \"{}{}\" tới {}", subjectPrefix, order.getId(), to);
         } catch (MailException ex) {
             log.warn("Không gửi được mail đơn #{} tới {}: {}", order.getId(), to, ex.getMessage());
         }
     }
 
-    private String buildBody(Order order) {
+    private String buildBody(Order order, String intro) {
         StringBuilder body = new StringBuilder();
         body.append("Xin chào ").append(order.getUser().getName()).append(",\n\n");
-        body.append("CameraShop đã nhận đơn hàng #").append(order.getId()).append(" của bạn.\n\n");
+        body.append(intro).append("\n\n");
         body.append("Sản phẩm:\n");
         for (OrderItem item : order.getItems()) {
             BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
@@ -77,7 +90,9 @@ public class OrderMailListener {
                     .append(" x ").append(item.getQuantity())
                     .append(" = ").append(VND.format(lineTotal)).append("\n");
         }
-        body.append("\nTổng tiền: ").append(VND.format(order.getTotalAmount())).append("\n\n");
+        body.append("\nTổng tiền: ").append(VND.format(order.getTotalAmount())).append("\n");
+        body.append("Thanh toán: ").append(order.getPaymentMethod().getLabel())
+                .append(" – ").append(order.getPaymentStatus().getLabel()).append("\n\n");
         body.append("Giao tới: ").append(order.getReceiverName()).append(" – ").append(order.getPhone()).append("\n");
         body.append("Địa chỉ: ").append(order.getAddress()).append("\n");
         body.append("Trạng thái: ").append(order.getStatus().getLabel()).append("\n\n");

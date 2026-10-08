@@ -15,6 +15,8 @@ import com.camerashop.entity.CartItem;
 import com.camerashop.entity.Order;
 import com.camerashop.entity.OrderItem;
 import com.camerashop.entity.OrderStatus;
+import com.camerashop.entity.PaymentMethod;
+import com.camerashop.entity.PaymentStatus;
 import com.camerashop.entity.ProductVariant;
 import com.camerashop.event.OrderPlacedEvent;
 import com.camerashop.exception.BadRequestException;
@@ -44,6 +46,7 @@ public class OrderService {
         }
 
         Order order = new Order(cart.getUser(), request.receiverName(), request.phone(), request.address());
+        order.setPaymentMethod(request.paymentMethod() != null ? request.paymentMethod() : PaymentMethod.COD);
 
         List<CartItem> items = cart.getItems().stream()
                 .sorted(Comparator.comparing(item -> item.getProductVariant().getId()))
@@ -91,7 +94,19 @@ public class OrderService {
     public OrderDTO cancelMyOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
+        if (order.getPaymentStatus() == PaymentStatus.PAID) {
+            throw new BadRequestException("Đơn đã thanh toán online, vui lòng liên hệ shop để hủy và hoàn tiền");
+        }
         return changeStatus(order, OrderStatus.CANCELLED);
+    }
+
+    @Transactional
+    public void cancelAfterFailedPayment(Long orderId) {
+        Order order = orderRepository.findWithItemsById(orderId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
+        if (order.getStatus().canChangeTo(OrderStatus.CANCELLED)) {
+            changeStatus(order, OrderStatus.CANCELLED);
+        }
     }
 
     @Transactional

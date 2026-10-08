@@ -1,5 +1,6 @@
 package com.camerashop.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.camerashop.entity.Order;
 import com.camerashop.entity.OrderStatus;
+import com.camerashop.entity.PaymentStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -28,4 +30,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Order o SET o.status = :to WHERE o.id = :orderId AND o.status = :from")
     int updateStatus(Long orderId, OrderStatus from, OrderStatus to);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Order o SET o.paymentStatus = :to, o.paymentTxnNo = :txnNo, o.paidAt = :paidAt "
+            + "WHERE o.id = :orderId AND o.paymentStatus = :from")
+    int updatePaymentStatus(Long orderId, PaymentStatus from, PaymentStatus to, String txnNo, Instant paidAt);
 }
