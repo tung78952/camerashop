@@ -43,6 +43,15 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod = PaymentMethod.COD;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
+
+    private Instant paidAt;
+    private String paymentTxnNo;
+
     @CreationTimestamp
     private Instant createdAt;
 

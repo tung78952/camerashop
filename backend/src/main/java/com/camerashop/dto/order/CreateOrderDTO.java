@@ -1,5 +1,7 @@
 package com.camerashop.dto.order;
 
+import com.camerashop.entity.PaymentMethod;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -15,5 +17,7 @@ public record CreateOrderDTO(
 
         @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng")
         @Size(max = 255, message = "Địa chỉ tối đa 255 ký tự")
-        String address) {
+        String address,
+
+        PaymentMethod paymentMethod) {
 }

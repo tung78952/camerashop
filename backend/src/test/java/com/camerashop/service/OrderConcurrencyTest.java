@@ -22,6 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.camerashop.TestcontainersConfig;
 import com.camerashop.dto.order.CreateOrderDTO;
 import com.camerashop.entity.Cart;
+import com.camerashop.entity.PaymentMethod;
 import com.camerashop.entity.ProductVariant;
 import com.camerashop.entity.Role;
 import com.camerashop.entity.User;
@@ -38,7 +39,7 @@ class OrderConcurrencyTest {
     private static final int BUYERS = 10;
     private static final String SKU = "FUJI-X100VI-BLK";
     private static final CreateOrderDTO SHIPPING =
-            new CreateOrderDTO("Người mua thử", "0901234567", "1 Lê Lợi, Q1, TP.HCM");
+            new CreateOrderDTO("Người mua thử", "0901234567", "1 Lê Lợi, Q1, TP.HCM", PaymentMethod.COD);
 
     @Autowired private OrderService orderService;
     @Autowired private UserRepository userRepository;
