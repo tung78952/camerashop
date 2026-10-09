@@ -75,6 +75,7 @@ export type ProductDetail = {
   name: string;
   description: string | null;
   imageUrl: string | null;
+  images: string[];
   brand: string;
   category: string;
   mount: string | null;

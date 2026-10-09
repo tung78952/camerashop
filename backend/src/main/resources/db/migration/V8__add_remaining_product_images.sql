@@ -1,0 +1,12 @@
+UPDATE products SET image_url = '/products/sony-e-18-135mm-f3-5-5-6-oss.jpg' WHERE name = 'Sony E 18-135mm F3.5-5.6 OSS';
+UPDATE products SET image_url = '/products/nikon-z-24-70mm-f-4-s.jpg' WHERE name = 'Nikon Z 24-70mm f/4 S';
+UPDATE products SET image_url = '/products/fujifilm-xf-18-55mm-f2-8-4-r-lm-ois.jpg' WHERE name = 'Fujifilm XF 18-55mm F2.8-4 R LM OIS';
+UPDATE products SET image_url = '/products/sac-sony-bc-qz1.jpg' WHERE name = 'Sạc Sony BC-QZ1';
+UPDATE products SET image_url = '/products/pin-sony-np-fw50.jpg' WHERE name = 'Pin Sony NP-FW50';
+UPDATE products SET image_url = '/products/pin-canon-lp-e17.jpg' WHERE name = 'Pin Canon LP-E17';
+UPDATE products SET image_url = '/products/pin-nikon-en-el15c.jpg' WHERE name = 'Pin Nikon EN-EL15c';
+UPDATE products SET image_url = '/products/pin-nikon-en-el25.jpg' WHERE name = 'Pin Nikon EN-EL25';
+UPDATE products SET image_url = '/products/pin-fujifilm-np-w235.jpg' WHERE name = 'Pin Fujifilm NP-W235';
+UPDATE products SET image_url = '/products/pin-fujifilm-np-w126s.jpg' WHERE name = 'Pin Fujifilm NP-W126S';
+UPDATE products SET image_url = '/products/the-nho-sandisk-extreme-sdxc-uhs-i.jpg' WHERE name = 'Thẻ nhớ SanDisk Extreme SDXC UHS-I';
+UPDATE products SET image_url = '/products/the-nho-sandisk-extreme-pro-sdxc-uhs-ii.jpg' WHERE name = 'Thẻ nhớ SanDisk Extreme PRO SDXC UHS-II';

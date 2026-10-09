@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import ProductImage from "@/components/ProductImage";
+
 import type { ProductSummary } from "@/lib/api";
 import { formatPriceRange } from "@/lib/format";
 
@@ -9,8 +11,8 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
       href={`/products/${product.id}`}
       className="block rounded-lg border bg-white p-4 transition hover:border-red-500 hover:shadow-md"
     >
-      <div className="mb-3 flex aspect-square items-center justify-center rounded bg-gray-100 text-sm text-gray-400">
-        Chưa có ảnh
+      <div className="relative mb-3 aspect-square overflow-hidden rounded bg-white">
+        <ProductImage src={product.imageUrl} name={product.name} brand={product.brand} category={product.category} />
       </div>
       <p className="text-xs text-gray-500">
         {product.brand} · {product.category}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import ProductImage from "@/components/ProductImage";
 import QuantityStepper from "@/components/QuantityStepper";
 import { removeCartItemAction, updateCartItemAction, type ActionResult } from "@/lib/actions";
 import type { CartItem } from "@/lib/api";
@@ -24,8 +25,8 @@ export default function CartItemRow({ item }: { item: CartItem }) {
 
   return (
     <li className="flex flex-wrap items-center gap-4 p-4">
-      <div className="flex size-16 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-400">
-        Chưa có ảnh
+      <div className="relative size-16 shrink-0 overflow-hidden rounded border bg-white">
+        <ProductImage src={item.imageUrl} name={item.productName} sizes="64px" />
       </div>
 
       <div className="min-w-48 flex-1">

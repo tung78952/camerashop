@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ProductCard from "@/components/ProductCard";
+import ProductGallery from "@/components/ProductGallery";
 import { getProductDetail } from "@/lib/api";
 
 import VariantPicker from "./VariantPicker";
@@ -24,9 +25,10 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
       </nav>
 
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100 text-gray-400">
-          Chưa có ảnh
-        </div>
+        <ProductGallery
+          images={product.images} mainImage={product.imageUrl}
+          name={product.name} brand={product.brand} category={product.category}
+        />
 
         <div className="space-y-4">
           <p className="text-sm text-gray-500">

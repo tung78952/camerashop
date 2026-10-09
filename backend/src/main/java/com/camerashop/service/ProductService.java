@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.camerashop.dto.common.PageDTO;
 import com.camerashop.dto.product.ProductDetailDTO;
@@ -60,6 +61,7 @@ public class ProductService {
         return PageDTO.from(page);
     }
 
+    @Transactional(readOnly = true)
     public ProductDetailDTO getDetail(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm " + id));
