@@ -39,7 +39,9 @@ class ProductImagesTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.images.length()").value(greaterThanOrEqualTo(5)))
                 .andExpect(jsonPath("$.images[*]").value(everyItem(startsWith("/products/sony-alpha-7-iv/"))))
-                .andExpect(jsonPath("$.imageUrl").value(startsWith("/products/sony-alpha-7-iv/0-")));
+                .andExpect(jsonPath("$.imageUrl").value(startsWith("/products/sony-alpha-7-iv/0-")))
+                .andExpect(jsonPath("$.specs[0].label").value("Cảm biến"))
+                .andExpect(jsonPath("$.specs[0].value").value("Full-frame 33MP Exmor R"));
     }
 
     @Test

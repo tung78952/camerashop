@@ -2,6 +2,8 @@ package com.camerashop.dto.admin;
 
 import java.util.List;
 
+import com.camerashop.dto.product.SpecDTO;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -33,5 +35,8 @@ public record ProductFormDTO(
         @Size(max = 20, message = "Tối đa 20 phiên bản")
         List<@Valid VariantFormDTO> variants,
 
-        List<Long> compatibleCameraIds) {
+        List<Long> compatibleCameraIds,
+
+        @Size(max = 30, message = "Tối đa 30 dòng thông số")
+        List<@Valid SpecDTO> specs) {
 }

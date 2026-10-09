@@ -20,6 +20,7 @@ import com.camerashop.entity.Brand;
 import com.camerashop.entity.Category;
 import com.camerashop.entity.Mount;
 import com.camerashop.entity.Product;
+import com.camerashop.entity.ProductSpec;
 import com.camerashop.entity.ProductVariant;
 import com.camerashop.exception.BadRequestException;
 import com.camerashop.exception.NotFoundException;
@@ -137,6 +138,11 @@ public class AdminProductService {
         product.getImages().clear();
         product.getImages().addAll(images);
         product.setImageUrl(images.isEmpty() ? null : images.get(0));
+
+        product.getSpecs().clear();
+        if (form.specs() != null) {
+            form.specs().forEach(spec -> product.getSpecs().add(new ProductSpec(spec.label().trim(), spec.value().trim())));
+        }
 
         product.getCompatibleCameras().clear();
         List<Long> cameraIds = form.compatibleCameraIds() == null ? List.of() : form.compatibleCameraIds();

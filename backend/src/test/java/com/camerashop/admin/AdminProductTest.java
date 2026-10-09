@@ -105,6 +105,8 @@ class AdminProductTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.variants.length()").value(2));
         mockMvc.perform(get("/api/products/" + id))
+                .andExpect(jsonPath("$.specs[0].label").value("Cảm biến"))
+                .andExpect(jsonPath("$.specs[1].value").value("Sony E"))
                 .andExpect(jsonPath("$.variants[0].price").value(62990000))
                 .andExpect(jsonPath("$.variants[1].name").value("Kit 28-70mm"));
 
@@ -182,7 +184,8 @@ class AdminProductTest {
         Long sonyE = mountRepository.findAll().stream().filter(m -> m.getName().equals("Sony E")).findFirst().orElseThrow().getId();
         String images = image == null ? "[]" : "[\"" + image + "\"]";
         return """
-                {"name":"%s","description":"Máy thử","brandId":%d,"categoryId":%d,"mountId":%d,"images":%s,"variants":%s}
+                {"name":"%s","description":"Máy thử","brandId":%d,"categoryId":%d,"mountId":%d,"images":%s,"variants":%s,
+                 "specs":[{"label":"Cảm biến","value":"Full-frame 33MP"},{"label":"Ngàm","value":"Sony E"}]}
                 """.formatted(name, sony, camera, sonyE, images, variantsJson);
     }
 

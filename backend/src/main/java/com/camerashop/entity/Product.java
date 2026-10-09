@@ -48,6 +48,11 @@ public class Product {
     @Column(name = "url")
     private List<String> images = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "product_specs", joinColumns = @JoinColumn(name = "product_id"))
+    @OrderColumn(name = "sort_order")
+    private List<ProductSpec> specs = new ArrayList<>();
+
     private boolean active = true;
 
     @CreationTimestamp

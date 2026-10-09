@@ -71,12 +71,18 @@ export type Variant = {
   stock: number;
 };
 
+export type Spec = {
+  label: string;
+  value: string;
+};
+
 export type ProductDetail = {
   id: number;
   name: string;
   description: string | null;
   imageUrl: string | null;
   images: string[];
+  specs: Spec[];
   brand: string;
   category: string;
   mount: string | null;
@@ -176,6 +182,7 @@ export type AdminProductDetail = {
   categoryId: number;
   mountId: number | null;
   images: string[];
+  specs: Spec[];
   variants: Variant[];
   compatibleCameraIds: number[];
   active: boolean;
@@ -198,6 +205,7 @@ export type ProductFormInput = {
   images: string[];
   variants: VariantFormInput[];
   compatibleCameraIds: number[];
+  specs: Spec[];
 };
 
 export type User = {

@@ -14,10 +14,17 @@ const BATTERY_AND_CHARGER = "Pin & sạc";
 
 type VariantRow = { key: string; id: number | null; name: string; sku: string; price: string; stock: string };
 
+type SpecRow = { key: string; label: string; value: string };
+
 let rowCounter = 0;
 function emptyRow(): VariantRow {
   rowCounter += 1;
   return { key: `new-${rowCounter}`, id: null, name: "", sku: "", price: "", stock: "0" };
+}
+
+function emptySpec(): SpecRow {
+  rowCounter += 1;
+  return { key: `spec-${rowCounter}`, label: "", value: "" };
 }
 
 export default function ProductForm({
@@ -43,6 +50,9 @@ export default function ProductForm({
       : [emptyRow()],
   );
   const [cameraIds, setCameraIds] = useState<number[]>(initial?.compatibleCameraIds ?? []);
+  const [specs, setSpecs] = useState<SpecRow[]>(
+    (initial?.specs ?? []).map((spec, index) => ({ key: `spec-old-${index}`, label: spec.label, value: spec.value })),
+  );
   const [uploading, setUploading] = useState<number>(0);
   const [dragOver, setDragOver] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +122,23 @@ export default function ProductForm({
     setVariants((prev) => prev.map((row) => (row.key === key ? { ...row, [field]: value } : row)));
   }
 
+
+  function updateSpec(key: string, field: "label" | "value", value: string) {
+    setSpecs((prev) => prev.map((row) => (row.key === key ? { ...row, [field]: value } : row)));
+  }
+
+  function moveSpec(index: number, step: number) {
+    setSpecs((prev) => {
+      const target = index + step;
+      if (target < 0 || target >= prev.length) {
+        return prev;
+      }
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
+
   function toggleCamera(id: number) {
     setCameraIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
@@ -138,6 +165,7 @@ export default function ProductForm({
         stock: Number(row.stock),
       })),
       compatibleCameraIds: isBattery ? cameraIds : [],
+      specs: specs.map((row) => ({ label: row.label, value: row.value })),
     };
     setSaving(true);
     setError(null);
@@ -232,6 +260,29 @@ export default function ProductForm({
         </div>
         <button type="button" onClick={() => setVariants((prev) => [...prev, emptyRow()])}
           className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-gray-100">+ Thêm phiên bản</button>
+      </section>
+
+      <section className="space-y-3 rounded-lg border bg-white p-5">
+        <h2 className="font-semibold">Thông số kỹ thuật <span className="text-sm font-normal text-gray-500">(hiện thành bảng ở trang sản phẩm)</span></h2>
+        {specs.length > 0 && (
+          <div className="space-y-2">
+            {specs.map((row, index) => (
+              <div key={row.key} className="grid grid-cols-12 gap-2">
+                <input value={row.label} onChange={(e) => updateSpec(row.key, "label", e.target.value)} required maxLength={60}
+                  placeholder="Tên (vd Cảm biến)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-4" />
+                <input value={row.value} onChange={(e) => updateSpec(row.key, "value", e.target.value)} required maxLength={200}
+                  placeholder="Giá trị (vd Full-frame 33MP)" className="col-span-9 rounded border px-2 py-1.5 text-sm sm:col-span-6" />
+                <span className="col-span-3 flex sm:col-span-2">
+                  <IconButton label="Lên trên" onClick={() => moveSpec(index, -1)}>↑</IconButton>
+                  <IconButton label="Xuống dưới" onClick={() => moveSpec(index, 1)}>↓</IconButton>
+                  <IconButton label="Xóa dòng" onClick={() => setSpecs((prev) => prev.filter((r) => r.key !== row.key))}>×</IconButton>
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <button type="button" onClick={() => setSpecs((prev) => [...prev, emptySpec()])}
+          className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-gray-100">+ Thêm thông số</button>
       </section>
 
       {isBattery && (

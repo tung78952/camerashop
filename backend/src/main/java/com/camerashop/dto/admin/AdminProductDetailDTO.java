@@ -2,6 +2,7 @@ package com.camerashop.dto.admin;
 
 import java.util.List;
 
+import com.camerashop.dto.product.SpecDTO;
 import com.camerashop.dto.product.VariantDTO;
 import com.camerashop.entity.Product;
 
@@ -13,6 +14,7 @@ public record AdminProductDetailDTO(
         Long categoryId,
         Long mountId,
         List<String> images,
+        List<SpecDTO> specs,
         List<VariantDTO> variants,
         List<Long> compatibleCameraIds,
         boolean active) {
@@ -26,6 +28,7 @@ public record AdminProductDetailDTO(
                 product.getCategory().getId(),
                 product.getMount() == null ? null : product.getMount().getId(),
                 List.copyOf(product.getImages()),
+                product.getSpecs().stream().map(spec -> SpecDTO.from(spec)).toList(),
                 variants,
                 product.getCompatibleCameras().stream().map(camera -> camera.getId()).sorted().toList(),
                 product.isActive());
