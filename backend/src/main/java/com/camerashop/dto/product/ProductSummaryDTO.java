@@ -3,6 +3,7 @@ package com.camerashop.dto.product;
 import java.math.BigDecimal;
 
 import com.camerashop.entity.Product;
+import com.camerashop.repository.ReviewRepository.RatingRow;
 
 public record ProductSummaryDTO(
         Long id,
@@ -12,9 +13,11 @@ public record ProductSummaryDTO(
         String mount,
         String imageUrl,
         BigDecimal minPrice,
-        BigDecimal maxPrice) {
+        BigDecimal maxPrice,
+        double ratingAverage,
+        long ratingCount) {
 
-    public static ProductSummaryDTO from(Product product, BigDecimal minPrice, BigDecimal maxPrice) {
+    public static ProductSummaryDTO from(Product product, BigDecimal minPrice, BigDecimal maxPrice, RatingRow rating) {
         return new ProductSummaryDTO(
                 product.getId(),
                 product.getName(),
@@ -23,6 +26,8 @@ public record ProductSummaryDTO(
                 product.getMount() == null ? null : product.getMount().getName(),
                 product.getImageUrl(),
                 minPrice,
-                maxPrice);
+                maxPrice,
+                rating == null ? 0 : Math.round(rating.getAverage() * 10) / 10.0,
+                rating == null ? 0 : rating.getCount());
     }
 }

@@ -23,6 +23,8 @@ import com.camerashop.repository.ProductRepository;
 import com.camerashop.repository.ProductSpecification;
 import com.camerashop.repository.ProductVariantRepository;
 import com.camerashop.repository.ProductVariantRepository.PriceRangeRow;
+import com.camerashop.repository.ReviewRepository;
+import com.camerashop.repository.ReviewRepository.RatingRow;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ReviewRepository reviewRepository;
 
     private static final String PRICE_ASC = "price_asc";
     private static final String PRICE_DESC = "price_desc";
@@ -57,8 +60,9 @@ public class ProductService {
 
         Page<Product> products = productRepository.findAll(spec, pageable);
         Map<Long, PriceRangeRow> priceRanges = findPriceRanges(products.getContent());
+        Map<Long, RatingRow> ratings = findRatings(products.getContent());
 
-        Page<ProductSummaryDTO> page = products.map(product -> toSummary(product, priceRanges));
+        Page<ProductSummaryDTO> page = products.map(product -> toSummary(product, priceRanges, ratings));
         return PageDTO.from(page);
     }
 
@@ -78,8 +82,9 @@ public class ProductService {
                 .filter(p -> p.isActive())
                 .toList();
         Map<Long, PriceRangeRow> priceRanges = findPriceRanges(compatibleProducts);
+        Map<Long, RatingRow> ratings = findRatings(compatibleProducts);
         List<ProductSummaryDTO> compatible = compatibleProducts.stream()
-                .map(p -> toSummary(p, priceRanges))
+                .map(p -> toSummary(p, priceRanges, ratings))
                 .toList();
 
         return ProductDetailDTO.from(product, variants, compatible);
@@ -94,11 +99,20 @@ public class ProductService {
                 .collect(Collectors.toMap(row -> row.getProductId(), row -> row));
     }
 
-    private ProductSummaryDTO toSummary(Product product, Map<Long, PriceRangeRow> priceRanges) {
+    private Map<Long, RatingRow> findRatings(List<Product> products) {
+        if (products.isEmpty()) {
+            return Map.of();
+        }
+        List<Long> ids = products.stream().map(p -> p.getId()).toList();
+        return reviewRepository.findRatings(ids).stream()
+                .collect(Collectors.toMap(row -> row.getProductId(), row -> row));
+    }
+
+    private ProductSummaryDTO toSummary(Product product, Map<Long, PriceRangeRow> priceRanges, Map<Long, RatingRow> ratings) {
         PriceRangeRow range = priceRanges.get(product.getId());
         BigDecimal minPrice = range == null ? null : range.getMinPrice();
         BigDecimal maxPrice = range == null ? null : range.getMaxPrice();
-        return ProductSummaryDTO.from(product, minPrice, maxPrice);
+        return ProductSummaryDTO.from(product, minPrice, maxPrice, ratings.get(product.getId()));
     }
 
     private List<Product> findCompatibleProducts(Product product) {
