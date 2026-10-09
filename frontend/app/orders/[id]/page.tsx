@@ -2,10 +2,19 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { getMyOrder } from "@/lib/api";
-import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+import {
+  formatDateTime,
+  formatOrderStatus,
+  formatPaymentMethod,
+  formatPaymentStatus,
+  formatPrice,
+  orderStatusColor,
+  paymentStatusColor,
+} from "@/lib/format";
 import { getSession } from "@/lib/session";
 
 import CancelOrderButton from "./CancelOrderButton";
+import PayVnpayButton from "./PayVnpayButton";
 
 export default async function OrderDetailPage({ params, searchParams }: PageProps<"/orders/[id]">) {
   const { id } = await params;
@@ -36,11 +45,27 @@ export default async function OrderDetailPage({ params, searchParams }: PageProp
       </div>
       <p className="mb-6 text-sm text-gray-500">Đặt lúc {formatDateTime(order.createdAt)}</p>
 
-      {order.status === "PENDING" && (
+      {order.status === "PENDING" && order.paymentStatus !== "PAID" && (
         <div className="mb-6">
           <CancelOrderButton orderId={order.id} />
         </div>
       )}
+
+      <section className="mb-6 rounded-lg border bg-white p-5 text-sm">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-semibold">Thanh toán</h2>
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${paymentStatusColor(order.paymentStatus)}`}>
+            {formatPaymentStatus(order.paymentStatus)}
+          </span>
+        </div>
+        <p>{formatPaymentMethod(order.paymentMethod)}</p>
+        {order.paidAt && <p className="text-gray-500">Đã thanh toán lúc {formatDateTime(order.paidAt)}</p>}
+        {order.paymentMethod === "VNPAY" && order.paymentStatus === "UNPAID" && order.status === "PENDING" && (
+          <div className="mt-3">
+            <PayVnpayButton orderId={order.id} />
+          </div>
+        )}
+      </section>
 
       <section className="mb-6 rounded-lg border bg-white p-5 text-sm">
         <h2 className="mb-2 font-semibold">Giao đến</h2>

@@ -8,6 +8,7 @@ import {
   ApiError,
   cancelOrder,
   changeOrderStatus,
+  createVnpayPayment,
   login,
   placeOrder,
   register,
@@ -89,8 +90,25 @@ export async function removeCartItemAction(itemId: number): Promise<ActionResult
 }
 
 
-export async function placeOrderAction(input: CreateOrderInput): Promise<ActionResult<number>> {
-  return run(async () => (await placeOrder(input)).id);
+export async function placeOrderAction(
+  input: CreateOrderInput,
+): Promise<ActionResult<{ orderId: number; paymentUrl: string | null }>> {
+  return run(async () => {
+    const order = await placeOrder(input);
+    let paymentUrl: string | null = null;
+    if (input.paymentMethod === "VNPAY") {
+      try {
+        paymentUrl = (await createVnpayPayment(order.id)).paymentUrl;
+      } catch {
+        paymentUrl = null;
+      }
+    }
+    return { orderId: order.id, paymentUrl };
+  });
+}
+
+export async function payVnpayAction(orderId: number): Promise<ActionResult<string>> {
+  return run(async () => (await createVnpayPayment(orderId)).paymentUrl);
 }
 
 export async function cancelOrderAction(orderId: number): Promise<ActionResult> {

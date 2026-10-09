@@ -2,7 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getAllOrdersAdmin } from "@/lib/api";
-import { formatDateTime, formatOrderStatus, formatPrice, orderStatusColor } from "@/lib/format";
+import {
+  formatDateTime,
+  formatOrderStatus,
+  formatPaymentStatus,
+  formatPrice,
+  orderStatusColor,
+  paymentStatusColor,
+} from "@/lib/format";
 import { getSession } from "@/lib/session";
 
 import StatusActions from "./StatusActions";
@@ -53,7 +60,12 @@ export default async function AdminOrdersPage() {
                     {order.receiverName}
                     <p className="text-xs text-gray-500">{order.phone}</p>
                   </td>
-                  <td className="px-4 py-3 text-right font-medium">{formatPrice(order.totalAmount)}</td>
+                  <td className="px-4 py-3 text-right font-medium">
+                    {formatPrice(order.totalAmount)}
+                    <p className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs ${paymentStatusColor(order.paymentStatus)}`}>
+                      {order.paymentMethod === "VNPAY" ? "VNPay · " : "COD · "}{formatPaymentStatus(order.paymentStatus)}
+                    </p>
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${orderStatusColor(order.status)}`}>
                       {formatOrderStatus(order.status)}

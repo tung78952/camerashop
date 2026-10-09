@@ -36,6 +36,35 @@ export function orderStatusColor(status: string): string {
   return ORDER_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
 }
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  COD: "Thanh toán khi nhận hàng",
+  VNPAY: "VNPay (QR / thẻ ATM / Visa)",
+};
+
+export function formatPaymentMethod(method: string): string {
+  return PAYMENT_METHOD_LABELS[method] ?? method;
+}
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  UNPAID: "Chưa thanh toán",
+  PAID: "Đã thanh toán",
+  FAILED: "Thanh toán thất bại",
+};
+
+export function formatPaymentStatus(status: string): string {
+  return PAYMENT_STATUS_LABELS[status] ?? status;
+}
+
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  UNPAID: "bg-orange-100 text-orange-800",
+  PAID: "bg-green-100 text-green-800",
+  FAILED: "bg-gray-200 text-gray-600",
+};
+
+export function paymentStatusColor(status: string): string {
+  return PAYMENT_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
+}
+
 export function formatPriceRange(min: number, max: number): string {
   if (min === max) {
     return formatPrice(min);

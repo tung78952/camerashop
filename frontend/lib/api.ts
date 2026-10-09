@@ -122,6 +122,10 @@ export type OrderItem = {
 
 export type OrderStatus = "PENDING" | "SHIPPING" | "COMPLETED" | "CANCELLED";
 
+export type PaymentMethod = "COD" | "VNPAY";
+
+export type PaymentStatus = "UNPAID" | "PAID" | "FAILED";
+
 export type Order = {
   id: number;
   status: OrderStatus;
@@ -130,6 +134,9 @@ export type Order = {
   phone: string;
   address: string;
   createdAt: string;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paidAt: string | null;
   items: OrderItem[];
 };
 
@@ -137,6 +144,13 @@ export type CreateOrderInput = {
   receiverName: string;
   phone: string;
   address: string;
+  paymentMethod: PaymentMethod;
+};
+
+export type PaymentResult = {
+  orderId: number | null;
+  paid: boolean;
+  message: string;
 };
 
 export type User = {
@@ -230,6 +244,15 @@ export async function getMyOrders(): Promise<Order[]> {
 
 export async function cancelOrder(orderId: number): Promise<Order> {
   return request<Order>("POST", `/api/orders/${orderId}/cancel`);
+}
+
+
+export async function createVnpayPayment(orderId: number): Promise<{ paymentUrl: string }> {
+  return request<{ paymentUrl: string }>("POST", `/api/payments/vnpay/${orderId}`);
+}
+
+export async function confirmVnpayReturn(vnpParams: URLSearchParams): Promise<PaymentResult> {
+  return request<PaymentResult>("GET", `/api/payments/vnpay/return?${vnpParams.toString()}`);
 }
 
 
