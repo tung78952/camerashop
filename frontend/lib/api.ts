@@ -19,7 +19,8 @@ export class ApiError extends Error {
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const session = await getSession();
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const isFile = body instanceof FormData;
+  const headers: Record<string, string> = isFile ? {} : { "Content-Type": "application/json" };
   if (session) {
     headers["Authorization"] = `Bearer ${session.token}`;
   }
@@ -27,7 +28,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined ? undefined : isFile ? body : JSON.stringify(body),
     cache: "no-store",
   });
   if (!res.ok) {
@@ -154,6 +155,51 @@ export type PaymentResult = {
   message: string;
 };
 
+export type AdminProductRow = {
+  id: number;
+  name: string;
+  brand: string;
+  category: string;
+  imageUrl: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  totalStock: number;
+  variantCount: number;
+  active: boolean;
+};
+
+export type AdminProductDetail = {
+  id: number;
+  name: string;
+  description: string | null;
+  brandId: number;
+  categoryId: number;
+  mountId: number | null;
+  images: string[];
+  variants: Variant[];
+  compatibleCameraIds: number[];
+  active: boolean;
+};
+
+export type VariantFormInput = {
+  id: number | null;
+  name: string;
+  sku: string;
+  price: number;
+  stock: number;
+};
+
+export type ProductFormInput = {
+  name: string;
+  description: string;
+  brandId: number;
+  categoryId: number;
+  mountId: number | null;
+  images: string[];
+  variants: VariantFormInput[];
+  compatibleCameraIds: number[];
+};
+
 export type User = {
   id: number;
   name: string;
@@ -263,6 +309,40 @@ export async function getAllOrdersAdmin(): Promise<Order[]> {
 
 export async function changeOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
   return request<Order>("PATCH", `/api/admin/orders/${orderId}/status`, { status });
+}
+
+
+export async function getAdminProducts(): Promise<AdminProductRow[]> {
+  return request<AdminProductRow[]>("GET", "/api/admin/products");
+}
+
+export async function getAdminProduct(id: string): Promise<AdminProductDetail | null> {
+  try {
+    return await request<AdminProductDetail>("GET", `/api/admin/products/${id}`);
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function createAdminProduct(input: ProductFormInput): Promise<AdminProductDetail> {
+  return request<AdminProductDetail>("POST", "/api/admin/products", input);
+}
+
+export async function updateAdminProduct(id: number, input: ProductFormInput): Promise<AdminProductDetail> {
+  return request<AdminProductDetail>("PUT", `/api/admin/products/${id}`, input);
+}
+
+export async function setAdminProductActive(id: number, active: boolean): Promise<AdminProductDetail> {
+  return request<AdminProductDetail>("PATCH", `/api/admin/products/${id}/active`, { active });
+}
+
+export async function uploadAdminImage(file: File): Promise<{ url: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  return request<{ url: string }>("POST", "/api/admin/images", form);
 }
 
 export async function getMyOrder(id: string): Promise<Order | null> {

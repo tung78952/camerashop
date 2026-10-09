@@ -8,15 +8,20 @@ import {
   ApiError,
   cancelOrder,
   changeOrderStatus,
+  createAdminProduct,
   createVnpayPayment,
   login,
   placeOrder,
   register,
   removeCartItem,
+  setAdminProductActive,
+  updateAdminProduct,
   updateCartItem,
+  uploadAdminImage,
   type AuthResponse,
   type CreateOrderInput,
   type OrderStatus,
+  type ProductFormInput,
 } from "@/lib/api";
 import { TOKEN_COOKIE } from "@/lib/session";
 
@@ -24,10 +29,12 @@ export type ActionResult<T = null> =
   | { ok: true; data: T }
   | { ok: false; error: string; needLogin: boolean };
 
-async function run<T>(work: () => Promise<T>): Promise<ActionResult<T>> {
+async function run<T>(work: () => Promise<T>, refreshPage = true): Promise<ActionResult<T>> {
   try {
     const data = await work();
-    refresh();
+    if (refreshPage) {
+      refresh();
+    }
     return { ok: true, data };
   } catch (error) {
     if (error instanceof ApiError) {
@@ -121,6 +128,32 @@ export async function cancelOrderAction(orderId: number): Promise<ActionResult> 
 export async function changeOrderStatusAction(orderId: number, status: OrderStatus): Promise<ActionResult> {
   return run(async () => {
     await changeOrderStatus(orderId, status);
+    return null;
+  });
+}
+
+
+export async function uploadImageAction(formData: FormData): Promise<ActionResult<string>> {
+  return run(async () => {
+    const file = formData.get("file");
+    if (!(file instanceof File)) {
+      throw new ApiError(400, "Chưa chọn ảnh");
+    }
+    return (await uploadAdminImage(file)).url;
+  }, false);
+}
+
+export async function createProductAction(input: ProductFormInput): Promise<ActionResult<number>> {
+  return run(async () => (await createAdminProduct(input)).id);
+}
+
+export async function updateProductAction(id: number, input: ProductFormInput): Promise<ActionResult<number>> {
+  return run(async () => (await updateAdminProduct(id, input)).id);
+}
+
+export async function setProductActiveAction(id: number, active: boolean): Promise<ActionResult> {
+  return run(async () => {
+    await setAdminProductActive(id, active);
     return null;
   });
 }
