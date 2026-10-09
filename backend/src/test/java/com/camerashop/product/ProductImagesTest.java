@@ -40,8 +40,10 @@ class ProductImagesTest {
                 .andExpect(jsonPath("$.images.length()").value(greaterThanOrEqualTo(5)))
                 .andExpect(jsonPath("$.images[*]").value(everyItem(startsWith("/products/sony-alpha-7-iv/"))))
                 .andExpect(jsonPath("$.imageUrl").value(startsWith("/products/sony-alpha-7-iv/0-")))
+                .andExpect(jsonPath("$.specs[0].group").value("Cảm biến & hình ảnh"))
                 .andExpect(jsonPath("$.specs[0].label").value("Cảm biến"))
-                .andExpect(jsonPath("$.specs[0].value").value("Full-frame 33MP Exmor R"));
+                .andExpect(jsonPath("$.specs[0].value").value("Full-frame 33MP Exmor R"))
+                .andExpect(jsonPath("$.specs.length()").value(greaterThanOrEqualTo(30)));
     }
 
     @Test

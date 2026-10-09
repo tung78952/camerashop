@@ -11,13 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductSpec {
 
+    @Column(name = "group_name")
+    private String groupName;
+
     @Column(name = "label")
     private String label;
 
     @Column(name = "value")
     private String value;
 
-    public ProductSpec(String label, String value) {
+    public ProductSpec(String groupName, String label, String value) {
+        this.groupName = groupName;
         this.label = label;
         this.value = value;
     }

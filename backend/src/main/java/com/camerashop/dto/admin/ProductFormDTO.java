@@ -37,6 +37,6 @@ public record ProductFormDTO(
 
         List<Long> compatibleCameraIds,
 
-        @Size(max = 30, message = "Tối đa 30 dòng thông số")
+        @Size(max = 80, message = "Tối đa 80 dòng thông số")
         List<@Valid SpecDTO> specs) {
 }

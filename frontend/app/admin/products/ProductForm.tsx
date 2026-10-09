@@ -14,7 +14,7 @@ const BATTERY_AND_CHARGER = "Pin & sạc";
 
 type VariantRow = { key: string; id: number | null; name: string; sku: string; price: string; stock: string };
 
-type SpecRow = { key: string; label: string; value: string };
+type SpecRow = { key: string; group: string; label: string; value: string };
 
 let rowCounter = 0;
 function emptyRow(): VariantRow {
@@ -22,9 +22,9 @@ function emptyRow(): VariantRow {
   return { key: `new-${rowCounter}`, id: null, name: "", sku: "", price: "", stock: "0" };
 }
 
-function emptySpec(): SpecRow {
+function emptySpec(group: string): SpecRow {
   rowCounter += 1;
-  return { key: `spec-${rowCounter}`, label: "", value: "" };
+  return { key: `spec-${rowCounter}`, group, label: "", value: "" };
 }
 
 export default function ProductForm({
@@ -51,7 +51,7 @@ export default function ProductForm({
   );
   const [cameraIds, setCameraIds] = useState<number[]>(initial?.compatibleCameraIds ?? []);
   const [specs, setSpecs] = useState<SpecRow[]>(
-    (initial?.specs ?? []).map((spec, index) => ({ key: `spec-old-${index}`, label: spec.label, value: spec.value })),
+    (initial?.specs ?? []).map((spec, index) => ({ key: `spec-old-${index}`, group: spec.group ?? "", label: spec.label, value: spec.value })),
   );
   const [uploading, setUploading] = useState<number>(0);
   const [dragOver, setDragOver] = useState<boolean>(false);
@@ -123,7 +123,7 @@ export default function ProductForm({
   }
 
 
-  function updateSpec(key: string, field: "label" | "value", value: string) {
+  function updateSpec(key: string, field: "group" | "label" | "value", value: string) {
     setSpecs((prev) => prev.map((row) => (row.key === key ? { ...row, [field]: value } : row)));
   }
 
@@ -165,7 +165,7 @@ export default function ProductForm({
         stock: Number(row.stock),
       })),
       compatibleCameraIds: isBattery ? cameraIds : [],
-      specs: specs.map((row) => ({ label: row.label, value: row.value })),
+      specs: specs.map((row) => ({ group: row.group.trim() || null, label: row.label, value: row.value })),
     };
     setSaving(true);
     setError(null);
@@ -263,15 +263,18 @@ export default function ProductForm({
       </section>
 
       <section className="space-y-3 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Thông số kỹ thuật <span className="text-sm font-normal text-gray-500">(hiện thành bảng ở trang sản phẩm)</span></h2>
+        <h2 className="font-semibold">Thông số kỹ thuật <span className="text-sm font-normal text-gray-500">(hiện thành bảng chia nhóm ở trang sản phẩm; các dòng cùng nhóm để liền nhau)</span></h2>
         {specs.length > 0 && (
           <div className="space-y-2">
             {specs.map((row, index) => (
               <div key={row.key} className="grid grid-cols-12 gap-2">
+                <input value={row.group} onChange={(e) => updateSpec(row.key, "group", e.target.value)} maxLength={60}
+                  list="spec-groups" placeholder="Nhóm (vd Quay video)"
+                  className="col-span-12 rounded border bg-gray-50 px-2 py-1.5 text-sm sm:col-span-3" />
                 <input value={row.label} onChange={(e) => updateSpec(row.key, "label", e.target.value)} required maxLength={60}
-                  placeholder="Tên (vd Cảm biến)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-4" />
+                  placeholder="Tên (vd Cảm biến)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-3" />
                 <input value={row.value} onChange={(e) => updateSpec(row.key, "value", e.target.value)} required maxLength={200}
-                  placeholder="Giá trị (vd Full-frame 33MP)" className="col-span-9 rounded border px-2 py-1.5 text-sm sm:col-span-6" />
+                  placeholder="Giá trị (vd Full-frame 33MP)" className="col-span-9 rounded border px-2 py-1.5 text-sm sm:col-span-4" />
                 <span className="col-span-3 flex sm:col-span-2">
                   <IconButton label="Lên trên" onClick={() => moveSpec(index, -1)}>↑</IconButton>
                   <IconButton label="Xuống dưới" onClick={() => moveSpec(index, 1)}>↓</IconButton>
@@ -281,7 +284,12 @@ export default function ProductForm({
             ))}
           </div>
         )}
-        <button type="button" onClick={() => setSpecs((prev) => [...prev, emptySpec()])}
+        <datalist id="spec-groups">
+          {[...new Set(specs.map((row) => row.group.trim()).filter((group) => group !== ""))].map((group) => (
+            <option key={group} value={group} />
+          ))}
+        </datalist>
+        <button type="button" onClick={() => setSpecs((prev) => [...prev, emptySpec(prev[prev.length - 1]?.group ?? "")])}
           className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-gray-100">+ Thêm thông số</button>
       </section>
 

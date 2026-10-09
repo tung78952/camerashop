@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record SpecDTO(
+        @Size(max = 60, message = "Tên nhóm tối đa 60 ký tự")
+        String group,
+
         @NotBlank(message = "Vui lòng nhập tên thông số")
         @Size(max = 60, message = "Tên thông số tối đa 60 ký tự")
         String label,
@@ -15,6 +18,6 @@ public record SpecDTO(
         String value) {
 
     public static SpecDTO from(ProductSpec spec) {
-        return new SpecDTO(spec.getLabel(), spec.getValue());
+        return new SpecDTO(spec.getGroupName(), spec.getLabel(), spec.getValue());
     }
 }

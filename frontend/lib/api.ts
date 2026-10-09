@@ -72,6 +72,7 @@ export type Variant = {
 };
 
 export type Spec = {
+  group: string | null;
   label: string;
   value: string;
 };

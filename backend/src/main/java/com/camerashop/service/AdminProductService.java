@@ -141,7 +141,8 @@ public class AdminProductService {
 
         product.getSpecs().clear();
         if (form.specs() != null) {
-            form.specs().forEach(spec -> product.getSpecs().add(new ProductSpec(spec.label().trim(), spec.value().trim())));
+            form.specs().forEach(spec -> product.getSpecs().add(
+                    new ProductSpec(blankToNull(spec.group()), spec.label().trim(), spec.value().trim())));
         }
 
         product.getCompatibleCameras().clear();
@@ -154,6 +155,10 @@ public class AdminProductService {
             }
             product.getCompatibleCameras().addAll(cameras);
         }
+    }
+
+    private String blankToNull(String text) {
+        return text == null || text.isBlank() ? null : text.trim();
     }
 
     private void checkSkus(ProductFormDTO form, Long productId) {
