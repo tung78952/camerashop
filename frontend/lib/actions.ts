@@ -14,6 +14,7 @@ import {
   placeOrder,
   register,
   removeCartItem,
+  saveMyReview,
   setAdminProductActive,
   updateAdminProduct,
   updateCartItem,
@@ -154,6 +155,14 @@ export async function updateProductAction(id: number, input: ProductFormInput): 
 export async function setProductActiveAction(id: number, active: boolean): Promise<ActionResult> {
   return run(async () => {
     await setAdminProductActive(id, active);
+    return null;
+  });
+}
+
+
+export async function saveReviewAction(productId: number, rating: number, comment: string): Promise<ActionResult> {
+  return run(async () => {
+    await saveMyReview(productId, { rating, comment });
     return null;
   });
 }

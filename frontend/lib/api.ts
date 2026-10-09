@@ -53,6 +53,8 @@ export type ProductSummary = {
   imageUrl: string | null;
   minPrice: number | null;
   maxPrice: number | null;
+  ratingAverage: number;
+  ratingCount: number;
 };
 
 export type Page<T> = {
@@ -363,4 +365,53 @@ export async function getMyOrder(id: string): Promise<Order | null> {
     }
     throw error;
   }
+}
+
+
+export type Review = {
+  id: number;
+  reviewerName: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  edited: boolean;
+};
+
+export type ProductReviews = {
+  average: number;
+  count: number;
+  starCounts: number[];
+  reviews: Review[];
+};
+
+export type MyReview = {
+  canReview: boolean;
+  myReview: Review | null;
+};
+
+export type ReviewInput = {
+  rating: number;
+  comment: string;
+};
+
+export async function getProductReviews(productId: number): Promise<ProductReviews> {
+  return request<ProductReviews>("GET", `/api/products/${productId}/reviews`);
+}
+
+export async function getMyReview(productId: number): Promise<MyReview | null> {
+  if (!(await getSession())) {
+    return null;
+  }
+  try {
+    return await request<MyReview>("GET", `/api/products/${productId}/reviews/mine`);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function saveMyReview(productId: number, input: ReviewInput): Promise<Review> {
+  return request<Review>("PUT", `/api/products/${productId}/reviews/mine`, input);
 }

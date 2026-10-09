@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
 import SpecTable from "@/components/SpecTable";
-import { getProductDetail } from "@/lib/api";
+import Stars from "@/components/Stars";
+import { getProductDetail, getProductReviews } from "@/lib/api";
 
+import ReviewSection from "./ReviewSection";
 import VariantPicker from "./VariantPicker";
 
 export default async function ProductPage({ params }: PageProps<"/products/[id]">) {
@@ -15,6 +17,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
   if (!product) {
     notFound();
   }
+  const reviews = await getProductReviews(product.id);
 
   const compatibleTitle =
     product.category === "Máy ảnh" ? "Ống kính & phụ kiện dùng được với máy này" : "Dùng được với các máy ảnh";
@@ -37,6 +40,12 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
             {product.mount && ` · Ngàm ${product.mount}`}
           </p>
           <h1 className="text-3xl font-bold">{product.name}</h1>
+          <a href="#danh-gia" className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600">
+            <Stars value={reviews.average} />
+            {reviews.count > 0
+              ? <span>{reviews.average.toLocaleString("vi-VN")} ({reviews.count} đánh giá)</span>
+              : <span>Chưa có đánh giá</span>}
+          </a>
 
           <VariantPicker variants={product.variants} />
 
@@ -50,6 +59,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
       </div>
 
       {product.specs.length > 0 && <SpecTable specs={product.specs} />}
+
+      <ReviewSection productId={product.id} data={reviews} />
 
       {product.compatibleProducts.length > 0 && (
         <section className="mt-12">
