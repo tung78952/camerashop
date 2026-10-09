@@ -43,7 +43,8 @@ public class ProductService {
     public PageDTO<ProductSummaryDTO> getAll(String keyword, Long brandId, Long categoryId, Long mountId,
                                              BigDecimal minPrice, BigDecimal maxPrice,
                                              String order, Pageable pageable) {
-        Specification<Product> spec = ProductSpecification.nameContains(keyword)
+        Specification<Product> spec = ProductSpecification.isActive()
+                .and(ProductSpecification.nameContains(keyword))
                 .and(ProductSpecification.hasBrand(brandId))
                 .and(ProductSpecification.hasCategory(categoryId))
                 .and(ProductSpecification.hasMount(mountId))
@@ -65,12 +66,17 @@ public class ProductService {
     public ProductDetailDTO getDetail(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm " + id));
+        if (!product.isActive()) {
+            throw new NotFoundException("Không tìm thấy sản phẩm " + id);
+        }
 
         List<VariantDTO> variants = productVariantRepository.findByProductIdOrderByPriceAsc(id).stream()
                 .map(variant -> VariantDTO.from(variant))
                 .toList();
 
-        List<Product> compatibleProducts = findCompatibleProducts(product);
+        List<Product> compatibleProducts = findCompatibleProducts(product).stream()
+                .filter(p -> p.isActive())
+                .toList();
         Map<Long, PriceRangeRow> priceRanges = findPriceRanges(compatibleProducts);
         List<ProductSummaryDTO> compatible = compatibleProducts.stream()
                 .map(p -> toSummary(p, priceRanges))

@@ -10,6 +10,11 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -39,6 +44,8 @@ app:
     hash-secret: ${VNPAY_HASH_SECRET:}
     pay-url: ${VNPAY_PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
     return-url: ${VNPAY_RETURN_URL:http://localhost:3000/payment/vnpay-return}
+  upload:
+    dir: ${UPLOAD_DIR:uploads}
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
 
 logging:

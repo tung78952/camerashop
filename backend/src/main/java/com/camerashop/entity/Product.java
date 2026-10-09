@@ -48,6 +48,8 @@ public class Product {
     @Column(name = "url")
     private List<String> images = new ArrayList<>();
 
+    private boolean active = true;
+
     @CreationTimestamp
     private Instant createdAt;
 

@@ -36,4 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE a.id = :accessoryId
             """)
     List<Product> findCamerasForAccessory(Long accessoryId);
+
+    @EntityGraph(attributePaths = {"brand", "category", "mount"})
+    List<Product> findAllByOrderByIdDesc();
 }

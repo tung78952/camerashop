@@ -55,6 +55,9 @@ public class OrderService {
         BigDecimal total = BigDecimal.ZERO;
         for (CartItem item : items) {
             ProductVariant variant = item.getProductVariant();
+            if (!variant.getProduct().isActive()) {
+                throw new BadRequestException(variant.getProduct().getName() + " đã ngừng bán, vui lòng xóa khỏi giỏ");
+            }
 
             int updated = productVariantRepository.decreaseStock(variant.getId(), item.getQuantity());
             if (updated == 0) {

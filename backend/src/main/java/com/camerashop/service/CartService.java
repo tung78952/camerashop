@@ -11,6 +11,7 @@ import com.camerashop.entity.Cart;
 import com.camerashop.entity.CartItem;
 import com.camerashop.entity.ProductVariant;
 import com.camerashop.entity.User;
+import com.camerashop.exception.BadRequestException;
 import com.camerashop.exception.NotFoundException;
 import com.camerashop.exception.OutOfStockException;
 import com.camerashop.repository.CartRepository;
@@ -39,6 +40,9 @@ public class CartService {
         Cart cart = findOrCreateCart(userId);
         ProductVariant variant = productVariantRepository.findById(variantId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phiên bản sản phẩm " + variantId));
+        if (!variant.getProduct().isActive()) {
+            throw new BadRequestException("Sản phẩm này đã ngừng bán");
+        }
 
         CartItem existing = findItemByVariant(cart, variantId);
         int newQuantity = (existing == null ? 0 : existing.getQuantity()) + quantity;

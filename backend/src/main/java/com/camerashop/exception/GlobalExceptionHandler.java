@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.camerashop.dto.common.ErrorDTO;
 
@@ -61,6 +62,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class, PropertyReferenceException.class })
     public ResponseEntity<ErrorDTO> handleBadRequest(Exception ex) {
         return build(HttpStatus.BAD_REQUEST, "Tham số không hợp lệ");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorDTO> handleTooLarge(MaxUploadSizeExceededException ex) {
+        return build(HttpStatus.BAD_REQUEST, "Ảnh tối đa 5 MB");
     }
 
     @ExceptionHandler(Exception.class)

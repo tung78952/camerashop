@@ -14,6 +14,10 @@ import jakarta.persistence.criteria.Subquery;
 
 public class ProductSpecification {
 
+    public static Specification<Product> isActive() {
+        return (root, query, cb) -> cb.isTrue(root.get("active"));
+    }
+
     public static Specification<Product> hasBrand(Long brandId) {
         return (root, query, cb) -> {
             if (brandId == null) {
