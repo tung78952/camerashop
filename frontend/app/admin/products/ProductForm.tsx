@@ -270,7 +270,7 @@ export default function ProductForm({
               <div key={row.key} className="grid grid-cols-12 gap-2">
                 <input value={row.group} onChange={(e) => updateSpec(row.key, "group", e.target.value)} maxLength={60}
                   list="spec-groups" placeholder="Nhóm (vd Quay video)"
-                  className="col-span-12 rounded border bg-gray-50 px-2 py-1.5 text-sm sm:col-span-3" />
+                  className="col-span-12 rounded border bg-gray-50 px-2 py-1.5 text-sm sm:col-span-3 [&::-webkit-calendar-picker-indicator]:hidden!" />
                 <input value={row.label} onChange={(e) => updateSpec(row.key, "label", e.target.value)} required maxLength={60}
                   placeholder="Tên (vd Cảm biến)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-3" />
                 <input value={row.value} onChange={(e) => updateSpec(row.key, "value", e.target.value)} required maxLength={200}
