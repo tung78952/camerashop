@@ -6,9 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(name = "app.storage", havingValue = "local", matchIfMissing = true)
 public class LocalImageStorage implements ImageStorage {
 
     private final Path productDir;

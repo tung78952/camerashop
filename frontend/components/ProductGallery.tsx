@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import ProductImage from "@/components/ProductImage";
+import { imageSrc } from "@/lib/image";
 
 export default function ProductGallery({
   images,
@@ -102,7 +103,7 @@ export default function ProductGallery({
           )}
 
           <Image
-            src={current}
+            src={imageSrc(current)}
             alt={name}
             width={720}
             height={720}

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { imageSrc } from "@/lib/image";
+
 const BRAND_COLORS: Record<string, string> = {
   Sony: "from-neutral-200 to-neutral-300 text-neutral-700",
   Canon: "from-red-100 to-red-200 text-red-800",
@@ -28,7 +30,7 @@ export default function ProductImage({
 
   if (src && !failed) {
     return (
-      <Image src={src} alt={name} fill sizes={sizes} unoptimized className="object-contain" onError={() => setFailed(true)} />
+      <Image src={imageSrc(src)} alt={name} fill sizes={sizes} unoptimized className="object-contain" onError={() => setFailed(true)} />
     );
   }
 

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ChatMessage, ChatProduct } from "@/lib/api";
 import { chatAction } from "@/lib/actions";
 import { formatPrice } from "@/lib/format";
+import { imageSrc } from "@/lib/image";
 
 type Line = ChatMessage & { products?: ChatProduct[]; error?: boolean };
 
@@ -158,7 +159,7 @@ function Bubble({ line }: { line: Line }) {
             >
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-white">
                 {product.imageUrl && (
-                  <Image src={product.imageUrl} alt={product.name} fill sizes="48px" className="object-contain" unoptimized />
+                  <Image src={imageSrc(product.imageUrl)} alt={product.name} fill sizes="48px" className="object-contain" unoptimized />
                 )}
               </div>
               <div className="min-w-0">

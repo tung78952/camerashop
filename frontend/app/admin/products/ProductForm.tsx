@@ -7,6 +7,7 @@ import { useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } fr
 import { createProductAction, updateProductAction, uploadImageAction } from "@/lib/actions";
 import type { AdminProductDetail, FilterOptions, ProductFormInput } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
+import { imageSrc } from "@/lib/image";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png"];
@@ -219,7 +220,7 @@ export default function ProductForm({
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
             {images.map((src, index) => (
               <div key={src} className={`overflow-hidden rounded border ${index === 0 ? "border-red-600 ring-1 ring-red-600" : ""}`}>
-                <Image src={src} alt={`Ảnh ${index + 1}`} width={160} height={160} unoptimized className="aspect-square w-full bg-white object-contain" />
+                <Image src={imageSrc(src)} alt={`Ảnh ${index + 1}`} width={160} height={160} unoptimized className="aspect-square w-full bg-white object-contain" />
                 <div className="flex items-center justify-between border-t bg-gray-50 px-1 py-0.5 text-xs">
                   {index === 0
                     ? <span className="px-1 font-semibold text-red-600">Ảnh chính</span>
