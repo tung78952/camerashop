@@ -17,10 +17,11 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+async function request<T>(method: string, path: string, body?: unknown, extraHeaders?: Record<string, string>): Promise<T> {
   const session = await getSession();
   const isFile = body instanceof FormData;
   const headers: Record<string, string> = isFile ? {} : { "Content-Type": "application/json" };
+  Object.assign(headers, extraHeaders);
   if (session) {
     headers["Authorization"] = `Bearer ${session.token}`;
   }
@@ -414,4 +415,26 @@ export async function getMyReview(productId: number): Promise<MyReview | null> {
 
 export async function saveMyReview(productId: number, input: ReviewInput): Promise<Review> {
   return request<Review>("PUT", `/api/products/${productId}/reviews/mine`, input);
+}
+
+
+export type ChatMessage = {
+  role: "user" | "assistant";
+  text: string;
+};
+
+export type ChatProduct = {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+  minPrice: number | null;
+};
+
+export type ChatReply = {
+  reply: string;
+  products: ChatProduct[];
+};
+
+export async function sendChat(message: string, history: ChatMessage[], clientIp: string | null): Promise<ChatReply> {
+  return request<ChatReply>("POST", "/api/chat", { message, history }, clientIp ? { "X-Forwarded-For": clientIp } : undefined);
 }

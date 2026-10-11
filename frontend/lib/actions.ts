@@ -1,7 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import {
   addCartItem,
@@ -15,11 +15,14 @@ import {
   register,
   removeCartItem,
   saveMyReview,
+  sendChat,
   setAdminProductActive,
   updateAdminProduct,
   updateCartItem,
   uploadAdminImage,
   type AuthResponse,
+  type ChatMessage,
+  type ChatReply,
   type CreateOrderInput,
   type OrderStatus,
   type ProductFormInput,
@@ -165,4 +168,11 @@ export async function saveReviewAction(productId: number, rating: number, commen
     await saveMyReview(productId, { rating, comment });
     return null;
   });
+}
+
+
+export async function chatAction(message: string, history: ChatMessage[]): Promise<ActionResult<ChatReply>> {
+  const requestHeaders = await headers();
+  const clientIp = requestHeaders.get("x-forwarded-for")?.split(",")[0].trim() ?? requestHeaders.get("x-real-ip");
+  return run(() => sendChat(message, history.slice(-10), clientIp ?? null), false);
 }

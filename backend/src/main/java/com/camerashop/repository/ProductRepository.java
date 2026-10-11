@@ -39,4 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @EntityGraph(attributePaths = {"brand", "category", "mount"})
     List<Product> findAllByOrderByIdDesc();
+
+    @EntityGraph(attributePaths = {"brand", "category", "mount", "specs"})
+    List<Product> findByActiveTrue();
 }
