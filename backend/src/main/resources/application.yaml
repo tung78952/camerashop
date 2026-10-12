@@ -39,6 +39,10 @@ app:
     expiration: ${JWT_EXPIRATION:24h}
   mail:
     from: ${MAIL_FROM:CameraShop <no-reply@camerashop.local>}
+    provider: ${MAIL_PROVIDER:smtp}
+  brevo:
+    api-key: ${BREVO_API_KEY:}
+    base-url: ${BREVO_BASE_URL:https://api.brevo.com}
   vnpay:
     tmn-code: ${VNPAY_TMN_CODE:}
     hash-secret: ${VNPAY_HASH_SECRET:}

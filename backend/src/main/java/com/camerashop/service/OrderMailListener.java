@@ -5,9 +5,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +16,8 @@ import com.camerashop.entity.Order;
 import com.camerashop.entity.OrderItem;
 import com.camerashop.event.OrderPaidEvent;
 import com.camerashop.event.OrderPlacedEvent;
+import com.camerashop.mail.EmailSendException;
+import com.camerashop.mail.EmailSender;
 import com.camerashop.repository.OrderRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +28,16 @@ public class OrderMailListener {
 
     private static final NumberFormat VND = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("vi-VN"));
 
-    private final JavaMailSender mailSender;
+    private final EmailSender emailSender;
     private final OrderRepository orderRepository;
     private final String from;
     private final String frontendUrl;
 
-    public OrderMailListener(JavaMailSender mailSender,
+    public OrderMailListener(EmailSender emailSender,
                              OrderRepository orderRepository,
                              @Value("${app.mail.from}") String from,
                              @Value("${app.frontend-url}") String frontendUrl) {
-        this.mailSender = mailSender;
+        this.emailSender = emailSender;
         this.orderRepository = orderRepository;
         this.from = from;
         this.frontendUrl = frontendUrl;
@@ -66,14 +65,9 @@ public class OrderMailListener {
         }
         String to = order.getUser().getEmail();
         try {
-            SimpleMailMessage mail = new SimpleMailMessage();
-            mail.setFrom(from);
-            mail.setTo(to);
-            mail.setSubject(subjectPrefix + order.getId());
-            mail.setText(buildBody(order, intro.formatted(order.getId())));
-            mailSender.send(mail);
+            emailSender.send(from, to, subjectPrefix + order.getId(), buildBody(order, intro.formatted(order.getId())));
             log.info("Đã gửi mail \"{}{}\" tới {}", subjectPrefix, order.getId(), to);
-        } catch (MailException ex) {
+        } catch (EmailSendException ex) {
             log.warn("Không gửi được mail đơn #{} tới {}: {}", order.getId(), to, ex.getMessage());
         }
     }
