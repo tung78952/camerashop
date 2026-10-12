@@ -4,9 +4,9 @@
 
 Full-stack e-commerce store for cameras, lenses and accessories (Sony, Canon, Nikon, Fujifilm), built as a solo portfolio project.
 
-**Live demo:** _coming soon_ · **API docs:** `/swagger-ui.html` on the backend
+**Live demo:** https://tcamerashop.store · **API docs:** https://camerashop-cfnj.onrender.com/swagger-ui.html
 
-> The free backend instance sleeps when idle — the first request may take ~1 minute to wake up.
+> Hosted on free tiers — if the backend has been idle, the first request may take a moment to wake it up.
 
 ## Demo accounts
 
@@ -27,7 +27,7 @@ VNPay sandbox test card: bank **NCB**, card `9704198526191432198`, name `NGUYEN 
 - **Reviews** — only verified buyers (a completed order containing the product) can review; one review per user per product; average rating on product cards.
 - **Admin** — product management with multi-image upload (content validation, normalization, content-hash file names), hide/unhide instead of delete, order status management.
 - **AI shopping assistant** — retrieval-augmented chat bot (Gemini): the backend retrieves matching in-stock products (budget, category, brand, owned camera) and grounds the answer on them; per-IP rate limiting.
-- **Order emails** — sent asynchronously after the transaction commits.
+- **Order emails** — sent asynchronously after the transaction commits; Mailpit locally, Brevo's email API in production (the free hosting tier blocks SMTP).
 
 ## Engineering highlights
 
@@ -38,13 +38,13 @@ VNPay sandbox test card: bank **NCB**, card `9704198526191432198`, name `NGUYEN 
 | N+1 queries on listing pages | Batched aggregate queries (price ranges, ratings) per page, `@EntityGraph` for associations |
 | Race between two "first" reviews or duplicate SKUs | Service-level checks plus database `UNIQUE` constraints as the last line of defense |
 | LLM hallucinating products | RAG: rule-based retrieval over the real catalog, strict system prompt, low temperature; the model is behind a `ChatModel` interface and faked in tests |
-| Image storage differs between local and cloud | `ImageStorage` interface with local-disk and Cloudinary implementations selected by configuration |
+| Image storage and email delivery differ between local and cloud | `ImageStorage` (local disk / Cloudinary) and `EmailSender` (SMTP / Brevo HTTPS API) interfaces, implementation selected by configuration |
 
 ## Tech stack
 
 - **Backend:** Java 21, Spring Boot 4, Spring Security (JWT), Spring Data JPA / Hibernate, Flyway, PostgreSQL, JUnit 5 + Testcontainers
 - **Frontend:** Next.js 16 (App Router, Server Components & Server Actions), TypeScript, Tailwind CSS
-- **Infrastructure:** Docker Compose (Postgres + Mailpit) for local development, GitHub Actions CI, Render (backend), Vercel (frontend), Neon (database), Cloudinary (images)
+- **Infrastructure:** Docker Compose (Postgres + Mailpit) for local development, GitHub Actions CI, Render (backend, Docker), Vercel (frontend), Neon (database), Cloudinary (images), Brevo (email)
 
 ```
 backend/             Spring Boot REST API — controller → service → repository, DTOs, Flyway migrations
