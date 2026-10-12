@@ -1,3 +1,5 @@
+// Admin request to change an order's status.
+
 package com.camerashop.dto.order;
 
 import com.camerashop.entity.OrderStatus;

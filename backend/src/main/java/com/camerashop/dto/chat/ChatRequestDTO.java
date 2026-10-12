@@ -1,3 +1,5 @@
+// Chat request: the new question plus a short recent history.
+
 package com.camerashop.dto.chat;
 
 import java.util.List;

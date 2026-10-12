@@ -1,3 +1,5 @@
+// Product gallery: main image, thumbnails and a full-size zoom popup with keyboard navigation.
+
 "use client";
 
 import Image from "next/image";
@@ -24,6 +26,7 @@ export default function ProductGallery({
   const list = images.length > 0 ? images : [mainImage];
   const current = list[selected];
 
+  // Previous/next image, wrapping around.
   function show(step: number) {
     setSelected((index) => (index + step + list.length) % list.length);
   }
@@ -32,6 +35,7 @@ export default function ProductGallery({
     if (!zoomOpen) {
       return;
     }
+    // Arrow keys navigate, Escape closes the popup.
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") setZoomOpen(false);
       if (event.key === "ArrowLeft") setSelected((index) => (index - 1 + list.length) % list.length);

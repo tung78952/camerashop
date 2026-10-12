@@ -1,3 +1,5 @@
+// Admin product form: details, drag-and-drop image upload and ordering, variants, specs and compatible cameras.
+
 "use client";
 
 import Image from "next/image";
@@ -63,6 +65,7 @@ export default function ProductForm({
   const isBattery = options.categories.find((c) => String(c.id) === categoryId)?.name === BATTERY_AND_CHARGER;
 
 
+  // Uploads files one by one after a quick client-side check (the backend validates again).
   async function uploadFiles(files: File[]) {
     setError(null);
     for (const file of files) {
@@ -145,6 +148,7 @@ export default function ProductForm({
   }
 
 
+  // Validates and sends the form, then returns to the product list.
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (uploading > 0) {
@@ -322,6 +326,7 @@ export default function ProductForm({
   );
 }
 
+// Select box for brand / category / mount.
 function Select({
   label,
   value,

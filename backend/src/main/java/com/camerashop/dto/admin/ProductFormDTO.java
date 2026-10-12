@@ -1,3 +1,5 @@
+// Admin create/edit product form: details, images, variants, compatible cameras and specs, with validation rules.
+
 package com.camerashop.dto.admin;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public record ProductFormDTO(
 
         Long mountId,
 
+        // Image paths in display order; only shop-hosted paths are accepted.
         @Size(max = 12, message = "Tối đa 12 ảnh")
         List<@Pattern(regexp = "^(/uploads/products/|/products/|https://)[A-Za-z0-9._/-]+$",
                 message = "Đường dẫn ảnh không hợp lệ") String> images,

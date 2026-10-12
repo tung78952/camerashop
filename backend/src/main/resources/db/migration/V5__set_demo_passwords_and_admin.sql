@@ -1,3 +1,5 @@
+-- BCrypt passwords for the demo customer and the admin account.
+
 UPDATE users
 SET password_hash = '$2a$10$48UW9ea9YWFyFb4wXmu8vOpyORyiWBJXEbixqoec1jti6FRwE0bfa'
 WHERE email = 'demo@camerashop.local';

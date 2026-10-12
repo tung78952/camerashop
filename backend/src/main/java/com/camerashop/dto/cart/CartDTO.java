@@ -1,3 +1,5 @@
+// Whole cart: lines, total quantity and total price (always computed on the server).
+
 package com.camerashop.dto.cart;
 
 import java.math.BigDecimal;

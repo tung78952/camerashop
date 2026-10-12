@@ -1,3 +1,5 @@
+// Authentication and authorization: public routes, 401/403, admin access, wrong password, duplicate email, tampered token.
+
 package com.camerashop.security;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

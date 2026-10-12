@@ -1,3 +1,5 @@
+// Stores images on local disk under uploads/products (default for development).
+
 package com.camerashop.storage;
 
 import java.io.IOException;

@@ -1,3 +1,5 @@
+// Login request body.
+
 package com.camerashop.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;

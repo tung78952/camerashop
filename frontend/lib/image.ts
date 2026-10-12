@@ -1,3 +1,5 @@
+// Maps stored image paths to loadable URLs: seed images (/products/...) come from Cloudinary in production.
+
 const IMAGE_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE ?? "";
 
 export function imageSrc(path: string): string {

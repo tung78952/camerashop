@@ -1,3 +1,5 @@
+// Admin order management: list all orders and change status.
+
 package com.camerashop.controller;
 
 import java.util.List;

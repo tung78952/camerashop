@@ -1,3 +1,5 @@
+// Admin orders table with status actions.
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

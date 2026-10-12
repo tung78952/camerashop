@@ -1,3 +1,5 @@
+// One previous chat message sent as context for follow-up questions.
+
 package com.camerashop.dto.chat;
 
 import jakarta.validation.constraints.NotBlank;

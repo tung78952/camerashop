@@ -1,3 +1,5 @@
+// Filter options (brands, categories, mounts) sorted by name.
+
 package com.camerashop.service;
 
 import java.util.List;

@@ -1,3 +1,5 @@
+// Logout button (calls the logout Server Action).
+
 "use client";
 
 import { useRouter } from "next/navigation";

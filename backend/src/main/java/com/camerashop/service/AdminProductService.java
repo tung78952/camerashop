@@ -1,3 +1,5 @@
+// Admin product management: list, create, edit (details, images, variants, compatibility, specs) and hide/unhide.
+
 package com.camerashop.service;
 
 import java.util.HashSet;
@@ -49,6 +51,7 @@ public class AdminProductService {
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
 
+    // All products including hidden ones, with variants loaded in one extra query.
     @Transactional(readOnly = true)
     public List<AdminProductRowDTO> list() {
         Map<Long, List<ProductVariant>> variantsByProduct = productVariantRepository.findAll().stream()
@@ -58,11 +61,13 @@ public class AdminProductService {
                 .toList();
     }
 
+    // Data for the edit form.
     @Transactional(readOnly = true)
     public AdminProductDetailDTO get(Long id) {
         return toDetail(findProduct(id));
     }
 
+    // Creates a product and its variants in one transaction.
     @Transactional
     public AdminProductDetailDTO create(ProductFormDTO form) {
         checkSkus(form, null);
@@ -76,6 +81,7 @@ public class AdminProductService {
         return toDetail(product);
     }
 
+    // Updates a product; variants are updated, added or deleted (sold variants cannot be deleted).
     @Transactional
     public AdminProductDetailDTO update(Long id, ProductFormDTO form) {
         Product product = findProduct(id);
@@ -120,6 +126,7 @@ public class AdminProductService {
         return toDetail(product);
     }
 
+    // Soft delete: hide or show a product instead of deleting it.
     @Transactional
     public AdminProductDetailDTO setActive(Long id, boolean active) {
         Product product = findProduct(id);
@@ -127,6 +134,7 @@ public class AdminProductService {
         return toDetail(product);
     }
 
+    // Copies description, images (first = main image), specs and compatible cameras from the form.
     private void applyDetails(Product product, ProductFormDTO form) {
         String description = form.description() == null ? "" : form.description().trim();
         product.setDescription(description.isEmpty() ? null : description);
@@ -161,6 +169,7 @@ public class AdminProductService {
         return text == null || text.isBlank() ? null : text.trim();
     }
 
+    // SKUs must be unique within the form and across other products.
     private void checkSkus(ProductFormDTO form, Long productId) {
         Set<String> seen = new HashSet<>();
         for (VariantFormDTO v : form.variants()) {

@@ -1,3 +1,5 @@
+-- Product image gallery table and seed images.
+
 CREATE TABLE product_images (
     product_id  BIGINT       NOT NULL REFERENCES products(id),
     sort_order  INTEGER      NOT NULL CHECK (sort_order >= 0),

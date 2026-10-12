@@ -1,3 +1,5 @@
+// Spring Security setup: stateless JWT authentication, public vs. protected routes, admin-only area and JSON errors.
+
 package com.camerashop.config;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class SecurityConfig {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
+    // Access rules for every API group.
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -66,6 +69,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // Maps the JWT "role" claim to ROLE_* authorities used by hasRole().
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
         authorities.setAuthoritiesClaimName("role");
@@ -75,25 +79,30 @@ public class SecurityConfig {
         return converter;
     }
 
+    // Shared HMAC-SHA256 key used to both sign and verify tokens.
     private SecretKey secretKey() {
         return new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     }
 
+    // Signs tokens at login/registration.
     @Bean
     JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey()));
     }
 
+    // Verifies the token on every request.
     @Bean
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withSecretKey(secretKey()).macAlgorithm(MacAlgorithm.HS256).build();
     }
 
+    // BCrypt password hashing (salted, one-way).
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Writes 401/403 errors in the same JSON shape as ErrorDTO.
     private static void writeError(HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json;charset=UTF-8");

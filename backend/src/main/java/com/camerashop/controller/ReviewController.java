@@ -1,3 +1,5 @@
+// Product reviews: public list; reading or writing your own review requires login.
+
 package com.camerashop.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,6 +45,7 @@ public class ReviewController {
         return reviewService.saveMyReview(requireUserId(jwt), productId, form);
     }
 
+    // /mine sits under a public GET path, so an anonymous call is rejected here with 401.
     private static Long requireUserId(Jwt jwt) {
         if (jwt == null) {
             throw new UnauthorizedException("Vui lòng đăng nhập");

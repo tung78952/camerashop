@@ -1,3 +1,5 @@
+// Buttons for the next allowed status of an order.
+
 "use client";
 
 import { useState } from "react";

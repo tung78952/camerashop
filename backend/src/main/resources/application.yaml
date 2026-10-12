@@ -1,3 +1,5 @@
+# Application config; secrets and environment-specific values come from environment variables (or ../.env locally).
+
 spring:
   application:
     name: backend
@@ -5,6 +7,7 @@ spring:
   config:
     import: optional:file:../.env[.properties]
 
+  # Local PostgreSQL by default; DB_URL points to the hosted database in production.
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/${POSTGRES_DB}}
     username: ${POSTGRES_USER}
@@ -15,10 +18,12 @@ spring:
       max-file-size: 5MB
       max-request-size: 6MB
 
+  # Hibernate only validates the schema; Flyway owns all schema changes.
   jpa:
     hibernate:
       ddl-auto: validate
 
+  # SMTP settings (Mailpit locally).
   mail:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:1025}
@@ -32,8 +37,10 @@ spring:
       mail.smtp.writetimeout: 5000
 
 app:
+  # Frontend origins allowed to call the API from a browser.
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  # JWT signing secret and lifetime (set JWT_SECRET in production).
   jwt:
     secret: ${JWT_SECRET:camerashop-dev-only-secret-key-change-me-0123456789}
     expiration: ${JWT_EXPIRATION:24h}
@@ -43,11 +50,13 @@ app:
   brevo:
     api-key: ${BREVO_API_KEY:}
     base-url: ${BREVO_BASE_URL:https://api.brevo.com}
+  # VNPay sandbox settings.
   vnpay:
     tmn-code: ${VNPAY_TMN_CODE:}
     hash-secret: ${VNPAY_HASH_SECRET:}
     pay-url: ${VNPAY_PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
     return-url: ${VNPAY_RETURN_URL:http://localhost:3000/payment/vnpay-return}
+  # Image storage: local disk or Cloudinary.
   storage: ${IMAGE_STORAGE:local}
   upload:
     dir: ${UPLOAD_DIR:uploads}
@@ -56,18 +65,22 @@ app:
     api-key: ${CLOUDINARY_API_KEY:}
     api-secret: ${CLOUDINARY_API_SECRET:}
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  # AI assistant (Gemini) settings.
   gemini:
     api-key: ${GEMINI_API_KEY:}
     model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
     base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
+  # Chat rate limits.
   chat:
     per-minute: ${CHAT_PER_MINUTE:6}
     per-day: ${CHAT_PER_DAY:40}
     global-per-day: ${CHAT_GLOBAL_PER_DAY:400}
 
+# SQL logging for development (set SQL_LOG_LEVEL=info in production).
 logging:
   level:
     org.hibernate.SQL: ${SQL_LOG_LEVEL:debug}
 
+# Port provided by the hosting platform via PORT.
 server:
   port: ${PORT:8080}

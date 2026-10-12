@@ -1,3 +1,5 @@
+// How the customer pays: cash on delivery or VNPay online payment.
+
 package com.camerashop.entity;
 
 public enum PaymentMethod {

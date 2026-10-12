@@ -1,3 +1,5 @@
+// VNPay return page: forwards the parameters to the backend, which verifies the signature before showing the result.
+
 import Link from "next/link";
 
 import { ApiError, confirmVnpayReturn, type PaymentResult } from "@/lib/api";

@@ -1,3 +1,5 @@
+// Web config: CORS for the frontend origin and serving locally uploaded images under /uploads/**.
+
 package com.camerashop.config;
 
 import java.nio.file.Path;

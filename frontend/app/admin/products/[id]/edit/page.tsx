@@ -1,3 +1,5 @@
+// Admin "edit product" page.
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

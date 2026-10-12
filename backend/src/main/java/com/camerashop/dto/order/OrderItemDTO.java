@@ -1,3 +1,5 @@
+// One order line using the price locked at checkout.
+
 package com.camerashop.dto.order;
 
 import java.math.BigDecimal;

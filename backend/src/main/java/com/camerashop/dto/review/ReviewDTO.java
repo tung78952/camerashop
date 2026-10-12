@@ -1,3 +1,5 @@
+// A review as shown on the product page (reviewer name only, no user details).
+
 package com.camerashop.dto.review;
 
 import java.time.Instant;

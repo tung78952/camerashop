@@ -1,3 +1,5 @@
+// Business rule violation -> HTTP 400.
+
 package com.camerashop.exception;
 
 public class BadRequestException extends RuntimeException {

@@ -1,3 +1,5 @@
+// Home / catalog page: filters, product grid and pagination driven by URL query parameters.
+
 import Link from "next/link";
 
 import FilterSidebar, { type SelectedFilters } from "@/components/FilterSidebar";
@@ -69,6 +71,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   );
 }
 
+// Reads one query parameter as a string.
 function readParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
@@ -76,6 +79,7 @@ function readParam(value: string | string[] | undefined): string | undefined {
   return value;
 }
 
+// Link to another page that keeps the current filters.
 function pageLink(selected: SelectedFilters, page: number): string {
   const params = new URLSearchParams();
   if (selected.q) params.set("q", selected.q);

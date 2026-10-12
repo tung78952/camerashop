@@ -1,3 +1,5 @@
+-- Technical specs table and initial spec data.
+
 CREATE TABLE product_specs (
     product_id  BIGINT       NOT NULL REFERENCES products(id),
     sort_order  INTEGER      NOT NULL CHECK (sort_order >= 0),

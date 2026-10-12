@@ -1,5 +1,8 @@
+// Formatting helpers: prices, dates and Vietnamese labels/colors for order and payment statuses.
+
 const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
+// 52990000 -> "52.990.000 ₫".
 export function formatPrice(price: number): string {
   return vnd.format(price);
 }
@@ -10,6 +13,7 @@ const vnDateTime = new Intl.DateTimeFormat("vi-VN", {
   timeZone: "Asia/Ho_Chi_Minh",
 });
 
+// ISO timestamp -> local Vietnamese date and time.
 export function formatDateTime(iso: string): string {
   return vnDateTime.format(new Date(iso));
 }
@@ -65,6 +69,7 @@ export function paymentStatusColor(status: string): string {
   return PAYMENT_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
 }
 
+// One price, or "min - max" when variants differ.
 export function formatPriceRange(min: number, max: number): string {
   if (min === max) {
     return formatPrice(min);

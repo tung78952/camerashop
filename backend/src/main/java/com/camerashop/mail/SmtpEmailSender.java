@@ -1,3 +1,5 @@
+// SMTP email sender (default; Mailpit in development).
+
 package com.camerashop.mail;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

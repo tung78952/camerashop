@@ -1,3 +1,5 @@
+-- Seed data: sample brands, categories, mounts, products, variants and compatibility.
+
 INSERT INTO brands (name) VALUES
     ('Sony'), ('Canon'), ('Nikon'), ('Fujifilm'), ('SanDisk');
 

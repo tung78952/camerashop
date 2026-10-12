@@ -1,3 +1,5 @@
+// Login form; on success redirects to the requested page.
+
 "use client";
 
 import { useRouter } from "next/navigation";

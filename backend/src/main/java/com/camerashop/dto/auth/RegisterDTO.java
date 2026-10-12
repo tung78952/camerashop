@@ -1,3 +1,5 @@
+// Registration request body with validation rules.
+
 package com.camerashop.dto.auth;
 
 import jakarta.validation.constraints.Email;

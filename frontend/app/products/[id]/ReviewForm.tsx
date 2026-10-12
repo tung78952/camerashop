@@ -1,3 +1,5 @@
+// Review form with a hover star picker and comment box (create or update).
+
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";

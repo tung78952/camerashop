@@ -1,3 +1,5 @@
+// Spring Boot entry point.
+
 package com.camerashop;
 
 import java.util.TimeZone;

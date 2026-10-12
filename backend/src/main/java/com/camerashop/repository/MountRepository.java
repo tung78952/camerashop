@@ -1,3 +1,5 @@
+// Lens mount data access.
+
 package com.camerashop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;

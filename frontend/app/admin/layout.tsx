@@ -1,3 +1,5 @@
+// Admin layout with the Orders / Products tabs.
+
 import { getSession } from "@/lib/session";
 
 import AdminTabs from "./AdminTabs";

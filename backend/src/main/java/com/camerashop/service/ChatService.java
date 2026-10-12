@@ -1,3 +1,5 @@
+// RAG chat pipeline: rate limit -> retrieve matching products -> build grounded prompt -> call the AI -> attach mentioned products.
+
 package com.camerashop.service;
 
 import java.math.BigDecimal;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatService {
 
+    // System rules for the AI: only recommend listed products, exact names and prices, plain text.
     static final String RULES = """
             Bạn là trợ lý tư vấn của CameraShop — cửa hàng bán máy ảnh, ống kính, pin/sạc và thẻ nhớ tại Việt Nam.
             Luật bắt buộc:
@@ -50,6 +53,7 @@ public class ChatService {
     private final CatalogRetriever retriever;
     private final ChatModel chatModel;
 
+    // Handles one chat question (no DB transaction is held while waiting for the AI).
     public ChatResponseDTO ask(String clientKey, ChatRequestDTO request) {
         rateLimiter.check(clientKey);
 
@@ -78,6 +82,7 @@ public class ChatService {
         return new ChatResponseDTO(reply, mentionedProducts(reply, retrieval.items()));
     }
 
+    // Formats the retrieved products as the knowledge section of the prompt.
     static String catalogBlock(Retrieval retrieval) {
         StringBuilder block = new StringBuilder("DANH SÁCH SẢN PHẨM (hệ thống đã tìm theo câu hỏi của khách)\n");
         block.append("Hệ thống hiểu nhu cầu: ").append(describe(retrieval.need())).append('\n');
@@ -123,6 +128,7 @@ public class ChatService {
         return VND.format(amount.setScale(0, RoundingMode.HALF_UP)) + "đ";
     }
 
+    // Removes markdown the model may still produce.
     static String cleanUp(String reply) {
         return reply.replace("**", "")
                 .replaceAll("(?m)^#+\\s*", "")
@@ -130,6 +136,7 @@ public class ChatService {
                 .trim();
     }
 
+    // Products whose names appear in the answer, returned as cards.
     static List<ChatProductDTO> mentionedProducts(String reply, List<CatalogItem> items) {
         String text = compact(CatalogRetriever.normalize(reply));
         return items.stream()

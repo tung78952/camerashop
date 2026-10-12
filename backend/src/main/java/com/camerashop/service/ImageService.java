@@ -1,3 +1,5 @@
+// Admin image upload: validate type/size/content, normalize to a 720x720 white canvas (never upscaled), store with a content-hash name.
+
 package com.camerashop.service;
 
 import java.awt.Color;
@@ -38,6 +40,7 @@ public class ImageService {
 
     private final ImageStorage imageStorage;
 
+    // Validates, normalizes and stores one image; returns its public path.
     public String upload(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("Chưa chọn ảnh");
@@ -54,6 +57,7 @@ public class ImageService {
         return imageStorage.save(sha256(jpeg).substring(0, 16) + ".jpg", jpeg);
     }
 
+    // Decodes the file to make sure it really is an image.
     private static BufferedImage read(MultipartFile file) {
         try {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
@@ -66,6 +70,7 @@ public class ImageService {
         }
     }
 
+    // Flattens transparency, crops white borders, downsizes and centers the product.
     private static BufferedImage normalize(BufferedImage source) {
         BufferedImage rgb = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D flat = rgb.createGraphics();
@@ -91,6 +96,7 @@ public class ImageService {
         return canvas;
     }
 
+    // Smallest rectangle containing all non-white pixels.
     private static int[] productBox(BufferedImage image) {
         int minX = image.getWidth(), minY = image.getHeight(), maxX = -1, maxY = -1;
         for (int y = 0; y < image.getHeight(); y++) {
@@ -109,6 +115,7 @@ public class ImageService {
         return new int[] {minX, minY, maxX - minX + 1, maxY - minY + 1};
     }
 
+    // Step-wise downscaling for sharper results.
     private static BufferedImage resize(BufferedImage image, int width, int height) {
         BufferedImage current = image;
         int w = image.getWidth(), h = image.getHeight();
@@ -129,6 +136,7 @@ public class ImageService {
         return out;
     }
 
+    // Encodes as 90% quality JPEG.
     private static byte[] toJpeg(BufferedImage image) {
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
              MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bytes)) {
@@ -146,6 +154,7 @@ public class ImageService {
         }
     }
 
+    // Content hash used as the file name (same image = same name, new image = new URL).
     private static String sha256(byte[] data) {
         try {
             return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(data));

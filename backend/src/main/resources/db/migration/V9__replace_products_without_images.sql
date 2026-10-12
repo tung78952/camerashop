@@ -1,3 +1,5 @@
+-- Replaces sample products that had no official images with similar current models.
+
 UPDATE products SET name = 'Nikon Z5 II', image_url = '/products/nikon-z5-ii.jpg',
     description = 'Full-frame 24MP, bộ xử lý EXPEED 7, lấy nét nhận diện chủ thể, quay 4K 60p.'
     WHERE name = 'Nikon Z5';

@@ -1,3 +1,5 @@
+// One technical spec row (group, label, value) embedded in a product; it has no identity of its own.
+
 package com.camerashop.entity;
 
 import jakarta.persistence.Column;

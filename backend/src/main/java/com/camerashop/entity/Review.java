@@ -1,3 +1,5 @@
+// Product review (1-5 stars + comment); one review per user per product, enforced by a UNIQUE constraint.
+
 package com.camerashop.entity;
 
 import java.time.Instant;

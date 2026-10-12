@@ -1,3 +1,5 @@
+// Review summary for a product: average, count, per-star counts and the reviews.
+
 package com.camerashop.dto.review;
 
 import java.util.List;

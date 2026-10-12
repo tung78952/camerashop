@@ -1,3 +1,5 @@
+// Quantity input with - / + buttons, limited by stock.
+
 export default function QuantityStepper({
   value,
   max,

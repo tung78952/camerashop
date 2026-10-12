@@ -1,3 +1,5 @@
+// Gemini implementation of ChatModel using the generateContent REST API.
+
 package com.camerashop.chat;
 
 import java.time.Duration;
@@ -90,6 +92,7 @@ public class GeminiChatModel implements ChatModel {
         }
     }
 
+    // Joins the answer text, skipping "thought" parts.
     private static String extractText(GeminiResponse response) {
         if (response == null || response.candidates() == null || response.candidates().isEmpty()) {
             return "";

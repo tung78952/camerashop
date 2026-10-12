@@ -1,3 +1,5 @@
+// Catalog: filtered and sorted listing, product details and compatibility suggestions.
+
 package com.camerashop.service;
 
 import java.math.BigDecimal;
@@ -43,6 +45,7 @@ public class ProductService {
     private static final String PRICE_ASC = "price_asc";
     private static final String PRICE_DESC = "price_desc";
 
+    // One page of products with filters and sorting; prices and ratings in one query each.
     public PageDTO<ProductSummaryDTO> getAll(String keyword, Long brandId, Long categoryId, Long mountId,
                                              BigDecimal minPrice, BigDecimal maxPrice,
                                              String order, Pageable pageable) {
@@ -66,6 +69,7 @@ public class ProductService {
         return PageDTO.from(page);
     }
 
+    // Product page data (hidden products return 404).
     @Transactional(readOnly = true)
     public ProductDetailDTO getDetail(Long id) {
         Product product = productRepository.findById(id)
@@ -90,6 +94,7 @@ public class ProductService {
         return ProductDetailDTO.from(product, variants, compatible);
     }
 
+    // Lowest and highest price for many products in one query.
     private Map<Long, PriceRangeRow> findPriceRanges(List<Product> products) {
         if (products.isEmpty()) {
             return Map.of();
@@ -99,6 +104,7 @@ public class ProductService {
                 .collect(Collectors.toMap(row -> row.getProductId(), row -> row));
     }
 
+    // Average rating and count for many products in one query.
     private Map<Long, RatingRow> findRatings(List<Product> products) {
         if (products.isEmpty()) {
             return Map.of();
@@ -115,6 +121,7 @@ public class ProductService {
         return ProductSummaryDTO.from(product, minPrice, maxPrice, ratings.get(product.getId()));
     }
 
+    // Cameras -> same-mount lenses + compatible batteries; lenses -> cameras; batteries -> cameras.
     private List<Product> findCompatibleProducts(Product product) {
         String category = product.getCategory().getName();
 

@@ -1,3 +1,5 @@
+// Cart endpoints for the logged-in user; every call returns the whole updated cart.
+
 package com.camerashop.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

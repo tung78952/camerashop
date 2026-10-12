@@ -1,3 +1,5 @@
+// One ordered item; unitPrice is the price at checkout time, so later price changes don't affect old orders.
+
 package com.camerashop.entity;
 
 import java.math.BigDecimal;

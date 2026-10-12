@@ -1,3 +1,5 @@
+// Composable query filters for the product listing, combined with .and().
+
 package com.camerashop.repository;
 
 import java.math.BigDecimal;
@@ -14,10 +16,12 @@ import jakarta.persistence.criteria.Subquery;
 
 public class ProductSpecification {
 
+    // Only products that are on sale.
     public static Specification<Product> isActive() {
         return (root, query, cb) -> cb.isTrue(root.get("active"));
     }
 
+    // Filter by brand; null means no filter.
     public static Specification<Product> hasBrand(Long brandId) {
         return (root, query, cb) -> {
             if (brandId == null) {
@@ -27,6 +31,7 @@ public class ProductSpecification {
         };
     }
 
+    // Filter by category; null means no filter.
     public static Specification<Product> hasCategory(Long categoryId){
         return (root, query, cb) -> {
             if (categoryId == null) {
@@ -36,6 +41,7 @@ public class ProductSpecification {
         };
     }
 
+    // Filter by lens mount; null means no filter.
     public static Specification<Product> hasMount(Long mountId){
         return (root, query, cb) -> {
             if (mountId == null){
@@ -45,6 +51,7 @@ public class ProductSpecification {
         };
     }
 
+    // Case-insensitive search by product name.
     public static Specification<Product> nameContains(String keyword) {
         return (root, query, cb) -> {
             if (keyword == null || keyword.isBlank()) {
@@ -55,6 +62,7 @@ public class ProductSpecification {
         };
     }
 
+    // Keep products with at least one variant in the price range.
     public static Specification<Product> priceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, cb) -> {
             if (minPrice == null && maxPrice == null) {
@@ -80,6 +88,7 @@ public class ProductSpecification {
         };
     }
 
+    // Sort by each product's lowest variant price.
     public static Specification<Product> orderByMinPrice(boolean ascending) {
         return (root, query, cb) -> {
             if (query.getResultType() != Long.class) {

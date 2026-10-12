@@ -1,3 +1,5 @@
+// Seed data tests: product gallery, replaced sample products and battery compatibility.
+
 package com.camerashop.product;
 
 import static org.hamcrest.Matchers.contains;

@@ -1,3 +1,5 @@
+// Chat answer plus the products it mentions, shown as clickable cards.
+
 package com.camerashop.dto.chat;
 
 import java.math.BigDecimal;

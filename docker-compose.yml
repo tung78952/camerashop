@@ -1,3 +1,5 @@
+# Local development services: PostgreSQL and Mailpit (fake SMTP inbox at http://localhost:8025).
+
 services:
   postgres:
     image: postgres:17

@@ -1,3 +1,5 @@
+// One row of the admin product table: price range, total stock and visibility.
+
 package com.camerashop.dto.admin;
 
 import java.math.BigDecimal;

@@ -1,3 +1,5 @@
+# Multi-stage build: compile with the JDK, run the jar on a slim JRE image (sized for a 512 MB instance).
+
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 COPY .mvn .mvn

@@ -1,3 +1,5 @@
+// Admin page guard for the UI (the backend enforces the real ADMIN check).
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

@@ -1,3 +1,5 @@
+// Loading screen shown while the next page is being rendered on the server.
+
 export default function Loading() {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-3 p-6 py-24">

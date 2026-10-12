@@ -1,3 +1,5 @@
+// Product with its brand, category, optional mount, image gallery, technical specs and soft-delete flag.
+
 package com.camerashop.entity;
 
 import java.time.Instant;
@@ -42,17 +44,20 @@ public class Product {
     private String description;
     private String imageUrl;
 
+    // Image gallery in display order (product_images table); the first image is the main one.
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @OrderColumn(name = "sort_order")
     @Column(name = "url")
     private List<String> images = new ArrayList<>();
 
+    // Technical specs in display order (product_specs table).
     @ElementCollection
     @CollectionTable(name = "product_specs", joinColumns = @JoinColumn(name = "product_id"))
     @OrderColumn(name = "sort_order")
     private List<ProductSpec> specs = new ArrayList<>();
 
+    // Hidden products stay in the database because past orders still reference them.
     private boolean active = true;
 
     @CreationTimestamp
@@ -70,6 +75,7 @@ public class Product {
     @JoinColumn(name = "mount_id")
     private Mount mount;
 
+    // Cameras this battery/charger is compatible with (product_compatibility table).
     @ManyToMany
     @JoinTable(
         name = "product_compatibility",

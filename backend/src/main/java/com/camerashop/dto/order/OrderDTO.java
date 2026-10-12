@@ -1,3 +1,5 @@
+// Order returned to the frontend: shipping, delivery/payment status, items and total.
+
 package com.camerashop.dto.order;
 
 import java.math.BigDecimal;

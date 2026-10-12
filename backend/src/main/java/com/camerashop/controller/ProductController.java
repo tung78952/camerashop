@@ -1,3 +1,5 @@
+// Public catalog endpoints: product listing with filters and product details.
+
 package com.camerashop.controller;
 
 import java.math.BigDecimal;

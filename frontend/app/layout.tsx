@@ -1,3 +1,5 @@
+// Root layout for every page: header (categories, cart count, session), footer and the chat widget.
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 

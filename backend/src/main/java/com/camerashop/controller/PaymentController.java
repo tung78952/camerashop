@@ -1,3 +1,5 @@
+// VNPay endpoints: create payment URL, browser return and server-to-server IPN.
+
 package com.camerashop.controller;
 
 import java.util.Map;
@@ -59,6 +61,7 @@ public class PaymentController {
         return Map.of("RspCode", result.code(), "Message", message);
     }
 
+    // Buyer IP required by VNPay (IPv6 localhost mapped to IPv4).
     private static String clientIp(HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         return ip == null || ip.contains(":") ? "127.0.0.1" : ip;

@@ -1,3 +1,5 @@
+// Email template tests: data is filled in, user input is HTML-escaped, the plain-text version is correct.
+
 package com.camerashop.mail;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

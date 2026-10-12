@@ -1,3 +1,5 @@
+// API client (server-only): types mirroring the backend DTOs and one function per endpoint; attaches the JWT from the cookie.
+
 import { getSession } from "@/lib/session";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8080";
@@ -8,6 +10,7 @@ type ErrorBody = {
   message: string;
 };
 
+// Backend error carrying the HTTP status and the backend's message.
 export class ApiError extends Error {
   status: number;
 
@@ -17,6 +20,7 @@ export class ApiError extends Error {
   }
 }
 
+// Shared fetch helper: JSON or multipart body, Bearer token, no caching, ApiError on failure.
 async function request<T>(method: string, path: string, body?: unknown, extraHeaders?: Record<string, string>): Promise<T> {
   const session = await getSession();
   const isFile = body instanceof FormData;
@@ -237,6 +241,7 @@ export type ProductQuery = {
 };
 
 
+// GET /api/products with filters, sorting and paging.
 export async function getProducts(query: ProductQuery): Promise<Page<ProductSummary>> {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
@@ -251,6 +256,7 @@ export async function getProducts(query: ProductQuery): Promise<Page<ProductSumm
   return request<Page<ProductSummary>>("GET", `/api/products?${params}`);
 }
 
+// GET /api/products/{id}; returns null for 404/400 so the page can show "not found".
 export async function getProductDetail(id: string): Promise<ProductDetail | null> {
   try {
     return await request<ProductDetail>("GET", `/api/products/${id}`);
@@ -262,68 +268,85 @@ export async function getProductDetail(id: string): Promise<ProductDetail | null
   }
 }
 
+// GET /api/filters.
 export async function getFilterOptions(): Promise<FilterOptions> {
   return request<FilterOptions>("GET", "/api/filters");
 }
 
 
+// POST /api/auth/login.
 export async function login(email: string, password: string): Promise<AuthResponse> {
   return request<AuthResponse>("POST", "/api/auth/login", { email, password });
 }
 
+// POST /api/auth/register.
 export async function register(name: string, email: string, password: string): Promise<AuthResponse> {
   return request<AuthResponse>("POST", "/api/auth/register", { name, email, password });
 }
 
 
+// GET /api/cart.
 export async function getCart(): Promise<Cart> {
   return request<Cart>("GET", "/api/cart");
 }
 
+// POST /api/cart/items.
 export async function addCartItem(variantId: number, quantity: number): Promise<Cart> {
   return request<Cart>("POST", "/api/cart/items", { variantId, quantity });
 }
 
+// PATCH /api/cart/items/{id}.
 export async function updateCartItem(itemId: number, quantity: number): Promise<Cart> {
   return request<Cart>("PATCH", `/api/cart/items/${itemId}`, { quantity });
 }
 
+// DELETE /api/cart/items/{id}.
 export async function removeCartItem(itemId: number): Promise<Cart> {
   return request<Cart>("DELETE", `/api/cart/items/${itemId}`);
 }
 
 
+// POST /api/orders.
 export async function placeOrder(input: CreateOrderInput): Promise<Order> {
   return request<Order>("POST", "/api/orders", input);
 }
 
+// GET /api/orders/{id}; null if missing or not yours.
+// GET /api/orders.
 export async function getMyOrders(): Promise<Order[]> {
   return request<Order[]>("GET", "/api/orders");
 }
 
+// POST /api/orders/{id}/cancel.
 export async function cancelOrder(orderId: number): Promise<Order> {
   return request<Order>("POST", `/api/orders/${orderId}/cancel`);
 }
 
 
+// POST /api/payments/vnpay/{orderId}: signed payment URL.
 export async function createVnpayPayment(orderId: number): Promise<{ paymentUrl: string }> {
   return request<{ paymentUrl: string }>("POST", `/api/payments/vnpay/${orderId}`);
 }
 
+// Forwards the VNPay return parameters to the backend for verification.
 export async function confirmVnpayReturn(vnpParams: URLSearchParams): Promise<PaymentResult> {
   return request<PaymentResult>("GET", `/api/payments/vnpay/return?${vnpParams.toString()}`);
 }
 
 
+// GET /api/admin/orders.
 export async function getAllOrdersAdmin(): Promise<Order[]> {
   return request<Order[]>("GET", "/api/admin/orders");
 }
 
+// PATCH /api/admin/orders/{id}/status.
 export async function changeOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
   return request<Order>("PATCH", `/api/admin/orders/${orderId}/status`, { status });
 }
 
 
+// GET /api/admin/products/{id}; null if missing.
+// GET /api/admin/products.
 export async function getAdminProducts(): Promise<AdminProductRow[]> {
   return request<AdminProductRow[]>("GET", "/api/admin/products");
 }
@@ -339,18 +362,22 @@ export async function getAdminProduct(id: string): Promise<AdminProductDetail | 
   }
 }
 
+// POST /api/admin/products.
 export async function createAdminProduct(input: ProductFormInput): Promise<AdminProductDetail> {
   return request<AdminProductDetail>("POST", "/api/admin/products", input);
 }
 
+// PUT /api/admin/products/{id}.
 export async function updateAdminProduct(id: number, input: ProductFormInput): Promise<AdminProductDetail> {
   return request<AdminProductDetail>("PUT", `/api/admin/products/${id}`, input);
 }
 
+// PATCH /api/admin/products/{id}/active.
 export async function setAdminProductActive(id: number, active: boolean): Promise<AdminProductDetail> {
   return request<AdminProductDetail>("PATCH", `/api/admin/products/${id}/active`, { active });
 }
 
+// POST /api/admin/images (multipart).
 export async function uploadAdminImage(file: File): Promise<{ url: string }> {
   const form = new FormData();
   form.append("file", file);
@@ -395,10 +422,12 @@ export type ReviewInput = {
   comment: string;
 };
 
+// GET /api/products/{id}/reviews.
 export async function getProductReviews(productId: number): Promise<ProductReviews> {
   return request<ProductReviews>("GET", `/api/products/${productId}/reviews`);
 }
 
+// GET /api/products/{id}/reviews/mine; null when not logged in.
 export async function getMyReview(productId: number): Promise<MyReview | null> {
   if (!(await getSession())) {
     return null;
@@ -413,6 +442,7 @@ export async function getMyReview(productId: number): Promise<MyReview | null> {
   }
 }
 
+// PUT /api/products/{id}/reviews/mine (create or update).
 export async function saveMyReview(productId: number, input: ReviewInput): Promise<Review> {
   return request<Review>("PUT", `/api/products/${productId}/reviews/mine`, input);
 }
@@ -435,6 +465,7 @@ export type ChatReply = {
   products: ChatProduct[];
 };
 
+// POST /api/chat, forwarding the visitor IP for rate limiting.
 export async function sendChat(message: string, history: ChatMessage[], clientIp: string | null): Promise<ChatReply> {
   return request<ChatReply>("POST", "/api/chat", { message, history }, clientIp ? { "X-Forwarded-For": clientIp } : undefined);
 }

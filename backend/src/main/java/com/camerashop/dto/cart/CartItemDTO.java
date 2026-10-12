@@ -1,3 +1,5 @@
+// One cart line with current price and line total.
+
 package com.camerashop.dto.cart;
 
 import java.math.BigDecimal;

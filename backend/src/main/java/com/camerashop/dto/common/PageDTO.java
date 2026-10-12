@@ -1,3 +1,5 @@
+// One page of results plus paging info for the frontend.
+
 package com.camerashop.dto.common;
 
 import java.util.List;

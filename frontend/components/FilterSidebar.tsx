@@ -1,7 +1,10 @@
+// Product filters (sort, price range, category, brand, mount) as a plain GET form, so filters live in the URL.
+
 import Link from "next/link";
 
 import type { FilterOptions, Option } from "@/lib/api";
 
+// Preset price ranges (value format: "min-max").
 export const PRICE_RANGES = [
   { value: "", label: "Tất cả" },
   { value: "0-5000000", label: "Dưới 5 triệu" },
@@ -63,6 +66,7 @@ function FilterBox({ title, children }: { title: string; children: React.ReactNo
   );
 }
 
+// One radio group with an "All" option.
 function OptionGroup({ title, name, options, selected }: { title: string; name: string; options: Option[]; selected?: string }) {
   return (
     <FilterBox title={title}>

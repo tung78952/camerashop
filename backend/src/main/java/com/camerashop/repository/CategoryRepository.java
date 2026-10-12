@@ -1,3 +1,5 @@
+// Category data access.
+
 package com.camerashop.repository;
 
 import com.camerashop.entity.Category;

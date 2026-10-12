@@ -1,3 +1,5 @@
+// Reviews block: rating summary, per-star bars, review list and the right call to action for the visitor.
+
 import Link from "next/link";
 
 import Stars from "@/components/Stars";

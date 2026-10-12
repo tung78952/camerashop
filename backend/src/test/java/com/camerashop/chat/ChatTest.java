@@ -1,3 +1,5 @@
+// Chat assistant tests with a fake model: retrieval by budget, mount and compatibility, prompt content, validation and rate limiting.
+
 package com.camerashop.chat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +38,7 @@ class ChatTest {
     @Autowired private CatalogRetriever retriever;
     @Autowired private FakeChatModel fakeModel;
 
+    // Fake model: remembers the prompt and answers with the first listed product.
     static class FakeChatModel implements ChatModel {
         String lastSystemPrompt;
 
@@ -51,6 +54,7 @@ class ChatTest {
         }
     }
 
+    // Replaces the real Gemini model with the fake one.
     @TestConfiguration
     static class FakeModelConfig {
         @Bean

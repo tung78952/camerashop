@@ -1,3 +1,5 @@
+// Sends order emails after the order transaction commits, asynchronously, using Thymeleaf templates.
+
 package com.camerashop.service;
 
 import java.math.BigDecimal;
@@ -51,6 +53,7 @@ public class OrderMailListener {
         this.frontendUrl = frontendUrl;
     }
 
+    // Order confirmation email (only after a successful commit, on a separate thread).
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
@@ -58,6 +61,7 @@ public class OrderMailListener {
         send(event.orderId(), "CameraShop – Xác nhận đơn hàng #", "CameraShop đã nhận đơn hàng #%d của bạn.");
     }
 
+    // Payment confirmation email after VNPay reports success.
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
@@ -66,6 +70,7 @@ public class OrderMailListener {
                 "CameraShop đã nhận được thanh toán VNPay cho đơn hàng #%d của bạn.");
     }
 
+    // Loads the order, renders the template and sends; failures are only logged.
     private void send(Long orderId, String subjectPrefix, String intro) {
         Order order = orderRepository.findWithItemsById(orderId).orElse(null);
         if (order == null) {
@@ -81,6 +86,7 @@ public class OrderMailListener {
         }
     }
 
+    // Data passed to the email template.
     private Map<String, Object> orderVariables(Order order, String intro) {
         List<Map<String, Object>> items = order.getItems().stream()
                 .map(item -> Map.<String, Object>of(

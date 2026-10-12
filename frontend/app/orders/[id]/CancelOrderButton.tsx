@@ -1,3 +1,5 @@
+// Cancel button for pending orders.
+
 "use client";
 
 import { useState } from "react";

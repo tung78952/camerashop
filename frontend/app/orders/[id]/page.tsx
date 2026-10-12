@@ -1,3 +1,5 @@
+// Order detail page: status, payment, shipping info and items, with cancel / pay again actions.
+
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 

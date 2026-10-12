@@ -1,3 +1,5 @@
+// Data used to pre-fill the admin product edit form.
+
 package com.camerashop.dto.admin;
 
 import java.util.List;

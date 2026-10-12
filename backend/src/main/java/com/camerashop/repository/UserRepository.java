@@ -1,3 +1,5 @@
+// User data access: lookup by email for login and duplicate checks for registration.
+
 package com.camerashop.repository;
 
 import java.util.Optional;

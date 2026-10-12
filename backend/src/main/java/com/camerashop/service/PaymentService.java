@@ -1,3 +1,5 @@
+// VNPay payment flow: create a signed payment URL and process the result (signature, amount, exactly-once update).
+
 package com.camerashop.service;
 
 import java.math.BigDecimal;
@@ -31,9 +33,11 @@ public class PaymentService {
     private final VnpayService vnpayService;
     private final ApplicationEventPublisher eventPublisher;
 
+    // Outcome of one VNPay callback, including the response code VNPay expects.
     public record VnpayResult(String code, Long orderId, boolean paid, String message) {
     }
 
+    // Payment URL for the user's own pending, unpaid order.
     @Transactional(readOnly = true)
     public String createVnpayUrl(Long userId, Long orderId, String ipAddr) {
         if (!vnpayService.isConfigured()) {
@@ -51,6 +55,7 @@ public class PaymentService {
                 "Thanh toan don hang " + order.getId(), ipAddr);
     }
 
+    // Shared by the return page and the IPN: verify, check amount, mark PAID or FAILED once.
     @Transactional
     public VnpayResult handleVnpayResult(Map<String, String> params) {
         if (!vnpayService.verify(params)) {
@@ -93,6 +98,7 @@ public class PaymentService {
         return new VnpayResult("00", orderId, false, "Thanh toán không thành công, đơn hàng đã được hủy");
     }
 
+    // Repeated callbacks just report the current state.
     private VnpayResult alreadyHandled(Long orderId) {
         boolean paid = orderRepository.findById(orderId)
                 .map(o -> o.getPaymentStatus() == PaymentStatus.PAID)
@@ -101,6 +107,7 @@ public class PaymentService {
                 paid ? "Thanh toán thành công" : "Thanh toán không thành công, đơn hàng đã được hủy");
     }
 
+    // Extracts the order id from the transaction reference.
     private static Long parseOrderId(String txnRef) {
         if (txnRef == null) {
             return null;

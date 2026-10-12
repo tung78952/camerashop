@@ -1,3 +1,5 @@
+// Register, login and "who am I" endpoints.
+
 package com.camerashop.controller;
 
 import org.springframework.http.HttpStatus;

@@ -1,3 +1,5 @@
+// Concurrency test: many buyers race for the last item.
+
 package com.camerashop.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,6 +73,7 @@ class OrderConcurrencyTest {
         });
     }
 
+    // With the atomic UPDATE exactly one order succeeds and stock never goes negative.
     @Test
     void onlyOneBuyerGetsTheLastItem() throws Exception {
         List<Outcome> outcomes = raceAll(buyerId -> orderService.placeOrder(buyerId, SHIPPING));
@@ -86,6 +89,7 @@ class OrderConcurrencyTest {
         assertEquals(1, countOrdersOfBuyers(), "Chỉ 1 đơn được tạo");
     }
 
+    // Shows why read-then-write is unsafe: the naive approach oversells under concurrency.
     @Test
     void naiveReadThenWriteOversells() throws Exception {
         List<Outcome> outcomes = raceAll(buyerId -> transaction.executeWithoutResult(status -> {

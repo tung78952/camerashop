@@ -1,3 +1,5 @@
+// Camera / lens brand (Sony, Canon, Nikon, Fujifilm...).
+
 package com.camerashop.entity;
 
 import jakarta.persistence.Entity;

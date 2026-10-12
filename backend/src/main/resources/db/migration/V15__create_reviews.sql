@@ -1,3 +1,5 @@
+-- Reviews table: 1-5 stars, one review per user per product (UNIQUE).
+
 CREATE TABLE reviews (
     id          BIGSERIAL       PRIMARY KEY,
     product_id  BIGINT          NOT NULL REFERENCES products(id),

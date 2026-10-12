@@ -1,3 +1,5 @@
+// One variant row in the admin product form (id is null for a new variant).
+
 package com.camerashop.dto.admin;
 
 import java.math.BigDecimal;

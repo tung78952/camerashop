@@ -1,3 +1,5 @@
+// Order delivery status and its allowed transitions: PENDING -> SHIPPING -> COMPLETED, PENDING -> CANCELLED.
+
 package com.camerashop.entity;
 
 import java.util.Set;
@@ -18,6 +20,7 @@ public enum OrderStatus {
         return label;
     }
 
+    // Single source of truth for which status changes are allowed.
     public boolean canChangeTo(OrderStatus next) {
         Set<OrderStatus> allowed = switch (this) {
             case PENDING -> Set.of(SHIPPING, CANCELLED);

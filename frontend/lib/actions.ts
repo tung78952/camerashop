@@ -1,3 +1,5 @@
+// Server Actions called from client components: they run on the Next.js server, read the httpOnly JWT cookie and call the API.
+
 "use server";
 
 import { refresh } from "next/cache";
@@ -33,6 +35,7 @@ export type ActionResult<T = null> =
   | { ok: true; data: T }
   | { ok: false; error: string; needLogin: boolean };
 
+// Runs a backend call, refreshes server-rendered data on success, converts errors into a result object.
 async function run<T>(work: () => Promise<T>, refreshPage = true): Promise<ActionResult<T>> {
   try {
     const data = await work();
@@ -48,6 +51,7 @@ async function run<T>(work: () => Promise<T>, refreshPage = true): Promise<Actio
   }
 }
 
+// Stores the JWT in an httpOnly, SameSite cookie that expires with the token.
 async function saveToken(auth: AuthResponse) {
   (await cookies()).set(TOKEN_COOKIE, auth.token, {
     httpOnly: true,
@@ -59,6 +63,7 @@ async function saveToken(auth: AuthResponse) {
 }
 
 
+// Logs in and stores the token.
 export async function loginAction(email: string, password: string): Promise<ActionResult> {
   return run(async () => {
     await saveToken(await login(email, password));
@@ -66,6 +71,7 @@ export async function loginAction(email: string, password: string): Promise<Acti
   });
 }
 
+// Registers and stores the token.
 export async function registerAction(name: string, email: string, password: string): Promise<ActionResult> {
   return run(async () => {
     await saveToken(await register(name, email, password));
@@ -73,12 +79,14 @@ export async function registerAction(name: string, email: string, password: stri
   });
 }
 
+// Logout just deletes the cookie (the backend is stateless).
 export async function logoutAction(): Promise<void> {
   (await cookies()).delete(TOKEN_COOKIE);
   refresh();
 }
 
 
+// Adds a variant to the cart.
 export async function addToCartAction(variantId: number, quantity: number): Promise<ActionResult> {
   return run(async () => {
     await addCartItem(variantId, quantity);
@@ -86,6 +94,7 @@ export async function addToCartAction(variantId: number, quantity: number): Prom
   });
 }
 
+// Changes a cart line quantity.
 export async function updateCartItemAction(itemId: number, quantity: number): Promise<ActionResult> {
   return run(async () => {
     await updateCartItem(itemId, quantity);
@@ -93,6 +102,7 @@ export async function updateCartItemAction(itemId: number, quantity: number): Pr
   });
 }
 
+// Removes a cart line.
 export async function removeCartItemAction(itemId: number): Promise<ActionResult> {
   return run(async () => {
     await removeCartItem(itemId);
@@ -101,6 +111,7 @@ export async function removeCartItemAction(itemId: number): Promise<ActionResult
 }
 
 
+// Places the order; returns the order id and, for VNPay, the payment URL.
 export async function placeOrderAction(
   input: CreateOrderInput,
 ): Promise<ActionResult<{ orderId: number; paymentUrl: string | null }>> {
@@ -118,10 +129,12 @@ export async function placeOrderAction(
   });
 }
 
+// New VNPay payment URL for an unpaid order.
 export async function payVnpayAction(orderId: number): Promise<ActionResult<string>> {
   return run(async () => (await createVnpayPayment(orderId)).paymentUrl);
 }
 
+// Customer cancels a pending order.
 export async function cancelOrderAction(orderId: number): Promise<ActionResult> {
   return run(async () => {
     await cancelOrder(orderId);
@@ -129,6 +142,7 @@ export async function cancelOrderAction(orderId: number): Promise<ActionResult> 
   });
 }
 
+// Admin changes an order status.
 export async function changeOrderStatusAction(orderId: number, status: OrderStatus): Promise<ActionResult> {
   return run(async () => {
     await changeOrderStatus(orderId, status);
@@ -137,6 +151,7 @@ export async function changeOrderStatusAction(orderId: number, status: OrderStat
 }
 
 
+// Admin image upload (no page refresh needed).
 export async function uploadImageAction(formData: FormData): Promise<ActionResult<string>> {
   return run(async () => {
     const file = formData.get("file");
@@ -147,14 +162,17 @@ export async function uploadImageAction(formData: FormData): Promise<ActionResul
   }, false);
 }
 
+// Admin creates a product.
 export async function createProductAction(input: ProductFormInput): Promise<ActionResult<number>> {
   return run(async () => (await createAdminProduct(input)).id);
 }
 
+// Admin updates a product.
 export async function updateProductAction(id: number, input: ProductFormInput): Promise<ActionResult<number>> {
   return run(async () => (await updateAdminProduct(id, input)).id);
 }
 
+// Admin hides or shows a product.
 export async function setProductActiveAction(id: number, active: boolean): Promise<ActionResult> {
   return run(async () => {
     await setAdminProductActive(id, active);
@@ -163,6 +181,7 @@ export async function setProductActiveAction(id: number, active: boolean): Promi
 }
 
 
+// Creates or updates the user's review.
 export async function saveReviewAction(productId: number, rating: number, comment: string): Promise<ActionResult> {
   return run(async () => {
     await saveMyReview(productId, { rating, comment });
@@ -171,6 +190,7 @@ export async function saveReviewAction(productId: number, rating: number, commen
 }
 
 
+// Asks the AI assistant; forwards the visitor IP from x-forwarded-for.
 export async function chatAction(message: string, history: ChatMessage[]): Promise<ActionResult<ChatReply>> {
   const requestHeaders = await headers();
   const clientIp = requestHeaders.get("x-forwarded-for")?.split(",")[0].trim() ?? requestHeaders.get("x-real-ip");

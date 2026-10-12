@@ -1,3 +1,5 @@
+// A selectable variant on the product page.
+
 package com.camerashop.dto.product;
 
 import java.math.BigDecimal;

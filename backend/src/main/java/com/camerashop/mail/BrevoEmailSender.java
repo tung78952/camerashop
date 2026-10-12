@@ -1,3 +1,5 @@
+// Brevo transactional email API sender (MAIL_PROVIDER=brevo), used in production where SMTP ports are blocked.
+
 package com.camerashop.mail;
 
 import java.time.Duration;
@@ -60,6 +62,7 @@ public class BrevoEmailSender implements EmailSender {
         }
     }
 
+    // Splits "Name <email>" into name and address.
     static Contact parse(String from) {
         Matcher m = NAME_AND_EMAIL.matcher(from);
         if (m.matches()) {

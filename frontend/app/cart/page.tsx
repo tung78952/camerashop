@@ -1,3 +1,5 @@
+// Cart page: cart lines and order summary.
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

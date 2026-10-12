@@ -1,3 +1,5 @@
+// Site header: logo, search box, login/account links, cart icon with count and category menu.
+
 import Link from "next/link";
 
 import LogoutButton from "@/components/LogoutButton";
@@ -78,6 +80,7 @@ export default function Header({
   );
 }
 
+// Inline SVG icons (no icon library needed).
 function SearchIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">

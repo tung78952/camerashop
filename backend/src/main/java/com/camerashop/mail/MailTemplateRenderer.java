@@ -1,3 +1,5 @@
+// Renders Thymeleaf email templates (templates/mail/<name>.html and .txt) into HTML and plain-text bodies.
+
 package com.camerashop.mail;
 
 import java.util.Map;
@@ -34,6 +36,7 @@ public class MailTemplateRenderer {
         return resolver;
     }
 
+    // Renders both versions of a template with the given variables.
     public RenderedMail render(String template, Map<String, Object> variables) {
         Context context = new Context();
         context.setVariables(variables);

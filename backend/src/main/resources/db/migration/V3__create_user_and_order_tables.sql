@@ -1,3 +1,5 @@
+-- Users, carts, cart items, orders and order items.
+
 CREATE TABLE users (
     id              BIGSERIAL       PRIMARY KEY,
     name            VARCHAR(100)    NOT NULL,

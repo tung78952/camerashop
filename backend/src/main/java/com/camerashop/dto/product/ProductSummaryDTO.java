@@ -1,3 +1,5 @@
+// Product card in listings: price range and average rating.
+
 package com.camerashop.dto.product;
 
 import java.math.BigDecimal;

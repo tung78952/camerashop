@@ -1,3 +1,5 @@
+// Swagger UI configuration (/swagger-ui.html) with a JWT "Authorize" button.
+
 package com.camerashop.config;
 
 import org.springframework.context.annotation.Bean;

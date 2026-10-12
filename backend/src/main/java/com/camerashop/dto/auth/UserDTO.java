@@ -1,3 +1,5 @@
+// Public user info (never includes the password hash).
+
 package com.camerashop.dto.auth;
 
 import com.camerashop.entity.Role;

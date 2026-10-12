@@ -1,3 +1,5 @@
+// One line in a cart: a variant and its quantity.
+
 package com.camerashop.entity;
 
 import jakarta.persistence.Entity;

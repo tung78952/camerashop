@@ -1,3 +1,5 @@
+// Error boundary page with a retry button.
+
 "use client";
 
 import Link from "next/link";

@@ -1,3 +1,5 @@
+// Reads the logged-in user from the JWT cookie for rendering (the backend still verifies the token on every request).
+
 import { cookies } from "next/headers";
 
 export const TOKEN_COOKIE = "camerashop_token";
@@ -10,6 +12,7 @@ export type Session = {
   token: string;
 };
 
+// Decodes the token payload; missing, malformed or expired tokens mean "not logged in".
 export async function getSession(): Promise<Session | null> {
   const token = (await cookies()).get(TOKEN_COOKIE)?.value;
   if (!token) {
@@ -28,6 +31,7 @@ export async function getSession(): Promise<Session | null> {
   };
 }
 
+// Only allows internal redirect paths after login (prevents open redirects).
 export function safeNextPath(next: string | string[] | undefined): string {
   const value = Array.isArray(next) ? next[0] : next;
   if (value && value.startsWith("/") && !value.startsWith("//")) {
@@ -36,6 +40,7 @@ export function safeNextPath(next: string | string[] | undefined): string {
   return "/";
 }
 
+// Decodes the base64url JSON payload of a JWT.
 function decodePayload(token: string): Record<string, unknown> | null {
   try {
     const payloadPart = token.split(".")[1];

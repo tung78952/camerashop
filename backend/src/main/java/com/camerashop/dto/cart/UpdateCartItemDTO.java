@@ -1,3 +1,5 @@
+// Request body for setting the new quantity of a cart line.
+
 package com.camerashop.dto.cart;
 
 import jakarta.validation.constraints.Max;

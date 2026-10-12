@@ -1,3 +1,5 @@
+// Admin products table: all products including hidden ones, with add / edit / hide actions.
+
 import Link from "next/link";
 
 import ProductImage from "@/components/ProductImage";

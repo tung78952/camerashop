@@ -1,3 +1,5 @@
+// Registered user; only the BCrypt hash of the password is stored.
+
 package com.camerashop.entity;
 
 import java.time.Instant;

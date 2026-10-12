@@ -1,3 +1,5 @@
+// Shopping cart, one per user.
+
 package com.camerashop.entity;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class Cart {
         this.user = user;
     }
 
+    // Adds a line and keeps both sides of the relationship in sync.
     public void addItem(ProductVariant productVariant, Integer quantity) {
         items.add(new CartItem(this, productVariant, quantity));
     }

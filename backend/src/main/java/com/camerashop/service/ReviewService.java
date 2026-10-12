@@ -1,3 +1,5 @@
+// Reviews: public reading, "has purchased" check and create-or-update of the user's own review.
+
 package com.camerashop.service;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class ReviewService {
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
 
+    // Average, per-star counts and the review list.
     @Transactional(readOnly = true)
     public ProductReviewsDTO getProductReviews(Long productId) {
         findVisibleProduct(productId);
@@ -56,6 +59,7 @@ public class ReviewService {
         return new ProductReviewsDTO(average, count, starCounts, reviews);
     }
 
+    // Whether the user may review and their existing review.
     @Transactional(readOnly = true)
     public MyReviewDTO getMyReview(Long userId, Long productId) {
         findVisibleProduct(productId);
@@ -65,6 +69,7 @@ public class ReviewService {
         return new MyReviewDTO(hasPurchased(userId, productId), mine);
     }
 
+    // Upsert: only users with a COMPLETED order for the product may review (403 otherwise).
     @Transactional
     public ReviewDTO saveMyReview(Long userId, Long productId, ReviewFormDTO form) {
         Product product = findVisibleProduct(productId);

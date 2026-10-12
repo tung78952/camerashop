@@ -1,3 +1,5 @@
+// Admin product management over HTTP: image normalization, validation, create/edit/hide, sold variants and access control.
+
 package com.camerashop.admin;
 
 import static org.hamcrest.Matchers.containsString;

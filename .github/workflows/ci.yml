@@ -1,3 +1,5 @@
+# CI: backend tests (Testcontainers) and frontend type check + lint on every push and pull request.
+
 name: CI
 
 on:

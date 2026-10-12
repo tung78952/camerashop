@@ -1,3 +1,5 @@
+// Product image with a generated placeholder when the image is missing or fails to load.
+
 "use client";
 
 import Image from "next/image";
@@ -44,6 +46,7 @@ export default function ProductImage({
   );
 }
 
+// Placeholder icon per product category.
 function CategoryIcon({ category }: { category?: string }) {
   const common = { width: 48, height: 48, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor",
     strokeWidth: 1.5, "aria-hidden": true } as const;

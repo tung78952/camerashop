@@ -1,3 +1,5 @@
+// Payment state, separate from delivery status: UNPAID -> PAID, or FAILED (order cancelled and restocked).
+
 package com.camerashop.entity;
 
 public enum PaymentStatus {

@@ -1,3 +1,5 @@
+// Checkout form: shipping info and payment method (COD or VNPay redirect).
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -69,6 +71,7 @@ export default function CheckoutForm() {
   );
 }
 
+// One selectable payment method.
 function PaymentOption({
   value,
   selected,

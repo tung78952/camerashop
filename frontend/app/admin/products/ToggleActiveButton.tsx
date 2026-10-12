@@ -1,3 +1,5 @@
+// Hide / show product button.
+
 "use client";
 
 import { useState } from "react";

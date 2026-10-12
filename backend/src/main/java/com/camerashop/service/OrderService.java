@@ -1,3 +1,5 @@
+// Checkout (with oversell protection), order history, cancellation and admin status changes with restocking.
+
 package com.camerashop.service;
 
 import java.math.BigDecimal;
@@ -37,6 +39,7 @@ public class OrderService {
     private final ProductVariantRepository productVariantRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    // Creates an order from the cart in one transaction: atomic stock decrement per item, server-side prices.
     @Transactional
     public OrderDTO placeOrder(Long userId, CreateOrderDTO request) {
         Cart cart = cartRepository.findByUserId(userId)
@@ -79,6 +82,7 @@ public class OrderService {
         return OrderDTO.from(order);
     }
 
+    // The current user's orders, newest first.
     @Transactional(readOnly = true)
     public List<OrderDTO> getMyOrders(Long userId) {
         return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
@@ -86,6 +90,7 @@ public class OrderService {
                 .toList();
     }
 
+    // One of the current user's orders (orders of other users return 404).
     @Transactional(readOnly = true)
     public OrderDTO getMyOrder(Long userId, Long orderId) {
         return orderRepository.findByIdAndUserId(orderId, userId)
@@ -93,6 +98,7 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn hàng " + orderId));
     }
 
+    // Customer cancels a pending order; stock is restored.
     @Transactional
     public OrderDTO cancelMyOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
@@ -103,6 +109,7 @@ public class OrderService {
         return changeStatus(order, OrderStatus.CANCELLED);
     }
 
+    // Cancels and restocks an order whose VNPay payment failed.
     @Transactional
     public void cancelAfterFailedPayment(Long orderId) {
         Order order = orderRepository.findWithItemsById(orderId)
@@ -112,6 +119,7 @@ public class OrderService {
         }
     }
 
+    // Admin moves an order along the allowed status flow.
     @Transactional
     public OrderDTO changeStatusByAdmin(Long orderId, OrderStatus next) {
         Order order = orderRepository.findWithItemsById(orderId)
@@ -119,6 +127,7 @@ public class OrderService {
         return changeStatus(order, next);
     }
 
+    // All orders for the admin page.
     @Transactional(readOnly = true)
     public List<OrderDTO> getAllOrders() {
         return orderRepository.findAllByOrderByCreatedAtDesc().stream()
@@ -126,6 +135,7 @@ public class OrderService {
                 .toList();
     }
 
+    // Validates the transition, updates it race-safely and restocks on cancellation.
     private OrderDTO changeStatus(Order order, OrderStatus next) {
         OrderStatus current = order.getStatus();
 

@@ -1,3 +1,5 @@
+// Starts a throwaway PostgreSQL container for integration tests; Flyway migrates it like production.
+
 package com.camerashop;
 
 import java.util.TimeZone;

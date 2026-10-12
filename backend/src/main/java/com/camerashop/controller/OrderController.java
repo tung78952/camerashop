@@ -1,3 +1,5 @@
+// Customer order endpoints: checkout, my orders, order detail and cancel.
+
 package com.camerashop.controller;
 
 import java.util.List;

@@ -1,3 +1,5 @@
+// Cart rules enforced on the server: totals are computed here and quantities never exceed stock.
+
 package com.camerashop.service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class CartService {
     private final ProductVariantRepository productVariantRepository;
     private final UserRepository userRepository;
 
+    // Returns the cart, or an empty one if the user has none yet.
     @Transactional(readOnly = true)
     public CartDTO getCart(Long userId) {
         return cartRepository.findByUserId(userId)
@@ -35,6 +38,7 @@ public class CartService {
                 .orElse(CartDTO.empty());
     }
 
+    // Adds a variant; if it is already in the cart, the quantities are merged.
     @Transactional
     public CartDTO addItem(Long userId, Long variantId, int quantity) {
         Cart cart = findOrCreateCart(userId);
@@ -57,6 +61,7 @@ public class CartService {
         return toDTO(cart);
     }
 
+    // Sets a new quantity for one line.
     @Transactional
     public CartDTO updateItem(Long userId, Long itemId, int quantity) {
         Cart cart = findCartOrThrow(userId);
@@ -66,6 +71,7 @@ public class CartService {
         return toDTO(cart);
     }
 
+    // Removes one line.
     @Transactional
     public CartDTO removeItem(Long userId, Long itemId) {
         Cart cart = findCartOrThrow(userId);
@@ -87,6 +93,7 @@ public class CartService {
                 .orElseThrow(() -> new NotFoundException("Giỏ hàng đang trống"));
     }
 
+    // Looks up the line inside this user's cart only.
     private CartItem findItemOrThrow(Cart cart, Long itemId) {
         return cart.getItems().stream()
                 .filter(item -> item.getId().equals(itemId))
@@ -101,6 +108,7 @@ public class CartService {
                 .orElse(null);
     }
 
+    // Rejects quantities above the available stock.
     private void checkStock(ProductVariant variant, int wantedQuantity) {
         if (wantedQuantity > variant.getStock()) {
             String name = variant.getProduct().getName() + " (" + variant.getName() + ")";

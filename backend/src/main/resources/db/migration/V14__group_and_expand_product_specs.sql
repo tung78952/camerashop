@@ -1,3 +1,5 @@
+-- Adds spec groups and replaces sample specs with fuller, grouped data.
+
 ALTER TABLE product_specs ADD COLUMN group_name VARCHAR(60);
 
 DELETE FROM product_specs

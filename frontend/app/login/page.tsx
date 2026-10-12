@@ -1,3 +1,5 @@
+// Login page (redirects away if already logged in).
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

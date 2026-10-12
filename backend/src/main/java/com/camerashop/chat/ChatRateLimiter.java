@@ -1,3 +1,5 @@
+// In-memory rate limiter for the public chat: per-IP per-minute and per-day limits plus a global daily cap.
+
 package com.camerashop.chat;
 
 import java.time.Instant;
@@ -35,6 +37,7 @@ public class ChatRateLimiter {
         this.globalPerDay = globalPerDay;
     }
 
+    // Throws 429 when a limit is reached; otherwise records the request.
     public synchronized void check(String clientKey) {
         Instant now = Instant.now();
         LocalDate date = LocalDate.now(VIETNAM);

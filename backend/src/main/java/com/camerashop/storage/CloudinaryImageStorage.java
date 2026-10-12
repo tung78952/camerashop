@@ -1,3 +1,5 @@
+// Stores images on Cloudinary via its signed upload API (enabled with IMAGE_STORAGE=cloudinary).
+
 package com.camerashop.storage;
 
 import java.nio.charset.StandardCharsets;

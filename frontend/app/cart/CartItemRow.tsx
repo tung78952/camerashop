@@ -1,3 +1,5 @@
+// One cart line with quantity controls and remove button.
+
 "use client";
 
 import Link from "next/link";

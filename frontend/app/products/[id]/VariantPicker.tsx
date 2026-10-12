@@ -1,3 +1,5 @@
+// Variant selector with price, stock, quantity and "add to cart".
+
 "use client";
 
 import Link from "next/link";
@@ -29,6 +31,7 @@ export default function VariantPicker({ variants }: { variants: Variant[] }) {
     setMessage(null);
   }
 
+  // Adds to cart; redirects to login when the session is missing.
   async function handleAddToCart() {
     if (!selected) return;
     setLoading(true);

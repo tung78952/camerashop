@@ -1,3 +1,5 @@
+// Customer order: shipping info, delivery status, payment status and the ordered items.
+
 package com.camerashop.entity;
 
 import java.math.BigDecimal;
@@ -43,6 +45,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    // Payment info: COD by default; VNPay orders switch the method and track the transaction.
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod = PaymentMethod.COD;
 
@@ -62,6 +65,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
+    // New orders always start as PENDING; the service sets the total after adding items.
     public Order(User user, String receiverName, String phone, String address) {
         this.user = user;
         this.receiverName = receiverName;
@@ -71,6 +75,7 @@ public class Order {
         this.totalAmount = BigDecimal.ZERO;
     }
 
+    // Adds an item and keeps both sides of the relationship in sync.
     public void addItem(ProductVariant productVariant, Integer quantity, BigDecimal unitPrice) {
         items.add(new OrderItem(this, productVariant, quantity, unitPrice));
     }

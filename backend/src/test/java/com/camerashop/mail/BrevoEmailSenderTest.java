@@ -1,3 +1,5 @@
+// Brevo sender tests against a fake HTTP server (request path, header, JSON body, error handling).
+
 package com.camerashop.mail;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

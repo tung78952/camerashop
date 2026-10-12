@@ -1,3 +1,5 @@
+-- Main images for the remaining sample products.
+
 UPDATE products SET image_url = '/products/sony-e-18-135mm-f3-5-5-6-oss.jpg' WHERE name = 'Sony E 18-135mm F3.5-5.6 OSS';
 UPDATE products SET image_url = '/products/nikon-z-24-70mm-f-4-s.jpg' WHERE name = 'Nikon Z 24-70mm f/4 S';
 UPDATE products SET image_url = '/products/fujifilm-xf-18-55mm-f2-8-4-r-lm-ois.jpg' WHERE name = 'Fujifilm XF 18-55mm F2.8-4 R LM OIS';

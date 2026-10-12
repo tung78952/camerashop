@@ -1,3 +1,5 @@
+// Admin image upload endpoint (multipart).
+
 package com.camerashop.controller;
 
 import org.springframework.http.HttpStatus;

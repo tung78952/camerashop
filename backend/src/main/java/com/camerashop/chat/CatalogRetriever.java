@@ -1,3 +1,5 @@
+// Retrieval step of the RAG chat: parse budget, category, brand and owned camera from the question, then filter and rank real products.
+
 package com.camerashop.chat;
 
 import java.math.BigDecimal;
@@ -54,6 +56,7 @@ public class CatalogRetriever {
     public record Retrieval(Need need, List<CatalogItem> items, boolean relaxedBudget) {
     }
 
+    // Returns the top matching products (or the closest ones if nothing fits the budget).
     @Transactional(readOnly = true)
     public Retrieval retrieve(String question, String previousQuestion) {
         String now = normalize(question);
@@ -112,11 +115,13 @@ public class CatalogRetriever {
         return new Retrieval(need, items, relaxed);
     }
 
+    // Removes Vietnamese accents and lower-cases text for matching.
     public static String normalize(String text) {
         String noMarks = Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return noMarks.replace('đ', 'd').replace('Đ', 'D').toLowerCase();
     }
 
+    // Accessory keywords win over "camera" (e.g. "battery for a Canon camera" is a battery).
     static String detectCategory(String text) {
         if (text.matches(".*(the nho|the sd|\\bsd\\b|memory card|\\bthe\\b.*(gb|tb)).*")) {
             return CARD;
@@ -142,6 +147,7 @@ public class CatalogRetriever {
         return null;
     }
 
+    // Understands "under 25 million", "around 20m", "15-20 million", etc.
     static BigDecimal[] detectBudget(String text) {
         List<BigDecimal> amounts = new ArrayList<>();
         List<Integer> positions = new ArrayList<>();
@@ -180,6 +186,7 @@ public class CatalogRetriever {
         return new BigDecimal[] {null, amount.multiply(BigDecimal.valueOf(1.1))};
     }
 
+    // Matches short model codes like "a7iv" or "r50" in the question.
     static Product findMentionedCamera(String text, List<Product> products) {
         String compact = compact(text);
         Product best = null;
@@ -209,6 +216,7 @@ public class CatalogRetriever {
         return text.replaceAll("[^a-z0-9]", "");
     }
 
+    // Hard filters: category, brand, same mount for lenses, compatibility table for batteries.
     private static boolean fits(Product product, Need need, Product camera) {
         String category = product.getCategory().getName();
         if (need.category() != null && !need.category().equals(category)) {
@@ -253,6 +261,7 @@ public class CatalogRetriever {
         return words;
     }
 
+    // Keyword relevance plus intent bonuses (vlog, portrait, beginner, travel).
     private static int score(Product product, Set<String> keywords, Product camera) {
         String haystack = normalize(product.getName() + " " + (product.getDescription() == null ? "" : product.getDescription())
                 + " " + product.getSpecs().stream().map(spec -> spec.getLabel() + " " + spec.getValue())
@@ -314,6 +323,7 @@ public class CatalogRetriever {
                 highlights(product.getSpecs()));
     }
 
+    // First spec of each group plus weight and stabilization.
     private static List<String> highlights(List<ProductSpec> specs) {
         Map<String, String> firstOfGroup = new LinkedHashMap<>();
         for (ProductSpec spec : specs) {

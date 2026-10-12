@@ -1,3 +1,5 @@
+// Central error handling: maps every exception to an HTTP status and a { status, message } body.
+
 package com.camerashop.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,3 +1,5 @@
+// Admin "new product" page.
+
 import Link from "next/link";
 
 import { getAdminProducts, getFilterOptions } from "@/lib/api";

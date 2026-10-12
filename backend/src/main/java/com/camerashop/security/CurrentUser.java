@@ -1,3 +1,5 @@
+// Reads the current user id from the verified JWT (the "sub" claim).
+
 package com.camerashop.security;
 
 import org.springframework.security.oauth2.jwt.Jwt;

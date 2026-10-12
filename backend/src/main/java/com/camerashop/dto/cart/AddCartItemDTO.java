@@ -1,3 +1,5 @@
+// Request body for adding a variant to the cart.
+
 package com.camerashop.dto.cart;
 
 import jakarta.validation.constraints.Max;

@@ -1,3 +1,5 @@
+-- Catalog schema: brands, categories, mounts, products, variants and the battery-camera compatibility table.
+
 CREATE TABLE brands (
     id   BIGSERIAL       PRIMARY KEY,
     name VARCHAR(100)    NOT NULL UNIQUE 

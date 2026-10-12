@@ -1,3 +1,5 @@
+// Read-only star rating; partial stars are drawn by clipping a gold overlay.
+
 export default function Stars({ value, size = "text-sm" }: { value: number; size?: string }) {
   const percent = Math.max(0, Math.min(5, value)) * 20;
 

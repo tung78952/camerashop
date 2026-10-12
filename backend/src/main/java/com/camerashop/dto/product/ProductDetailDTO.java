@@ -1,3 +1,5 @@
+// Product detail page: info, gallery, specs, variants and compatible products.
+
 package com.camerashop.dto.product;
 
 import java.util.List;

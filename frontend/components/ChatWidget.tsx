@@ -1,3 +1,5 @@
+// Floating AI shopping assistant: suggestions, chat history and clickable product cards (hidden on admin pages).
+
 "use client";
 
 import Image from "next/image";
@@ -36,6 +38,7 @@ export default function ChatWidget() {
     return null;
   }
 
+  // Sends the question with recent history and appends the answer or the error message.
   async function ask(question: string) {
     const text = question.trim();
     if (!text || loading) return;
@@ -137,6 +140,7 @@ export default function ChatWidget() {
   );
 }
 
+// One chat bubble, with product cards under assistant answers.
 function Bubble({ line }: { line: Line }) {
   const isUser = line.role === "user";
   return (

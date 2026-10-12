@@ -1,3 +1,5 @@
+// Health check used by the hosting platform.
+
 package com.camerashop.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;

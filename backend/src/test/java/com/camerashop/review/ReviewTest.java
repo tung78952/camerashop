@@ -1,3 +1,5 @@
+// Review rules: public read, 401 for guests, 403 before the order is completed, one review per user.
+
 package com.camerashop.review;
 
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;

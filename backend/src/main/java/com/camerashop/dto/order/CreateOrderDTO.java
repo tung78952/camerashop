@@ -1,3 +1,5 @@
+// Checkout request: shipping info and payment method only; items and prices come from the server-side cart.
+
 package com.camerashop.dto.order;
 
 import com.camerashop.entity.PaymentMethod;

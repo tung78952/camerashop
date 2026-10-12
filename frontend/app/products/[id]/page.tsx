@@ -1,3 +1,5 @@
+// Product detail page: gallery, variant picker, specs, reviews and compatible products.
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

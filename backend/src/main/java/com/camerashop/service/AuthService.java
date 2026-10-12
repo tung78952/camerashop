@@ -1,3 +1,5 @@
+// Registration and login: BCrypt password check, then a JWT is issued.
+
 package com.camerashop.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    // Registers a customer account and logs them in.
     @Transactional
     public AuthResponseDTO register(RegisterDTO request) {
         String email = normalizeEmail(request.email());
@@ -37,6 +40,7 @@ public class AuthService {
         return toResponse(user);
     }
 
+    // Same error for unknown email and wrong password, so emails cannot be probed.
     @Transactional(readOnly = true)
     public AuthResponseDTO login(LoginDTO request) {
         User user = userRepository.findByEmail(normalizeEmail(request.email()))
@@ -52,6 +56,7 @@ public class AuthService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
     }
 
+    // Trims and lower-cases the email.
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase();
     }

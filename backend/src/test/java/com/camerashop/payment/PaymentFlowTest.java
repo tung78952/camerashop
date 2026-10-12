@@ -1,3 +1,5 @@
+// VNPay flow tests: success, duplicate callbacks, failure with restock, wrong amount, forged result and access rules.
+
 package com.camerashop.payment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

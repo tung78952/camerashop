@@ -1,3 +1,5 @@
+// Request body for writing or editing a review.
+
 package com.camerashop.dto.review;
 
 import jakarta.validation.constraints.Max;

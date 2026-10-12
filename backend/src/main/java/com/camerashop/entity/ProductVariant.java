@@ -1,3 +1,5 @@
+// Purchasable variant of a product (e.g. body only / kit); price, SKU and stock live here.
+
 package com.camerashop.entity;
 
 import java.math.BigDecimal;

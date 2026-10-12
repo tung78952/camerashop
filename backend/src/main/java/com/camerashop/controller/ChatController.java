@@ -1,3 +1,5 @@
+// AI shopping assistant endpoint (public, rate-limited per client IP).
+
 package com.camerashop.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ public class ChatController {
         return chatService.ask(clientKey(http), request);
     }
 
+    // Client IP for rate limiting (first X-Forwarded-For value set by the frontend server).
     private static String clientKey(HttpServletRequest http) {
         String forwarded = http.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {

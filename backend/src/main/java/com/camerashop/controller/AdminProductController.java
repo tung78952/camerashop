@@ -1,3 +1,5 @@
+// Admin product management endpoints (list, get, create, update, hide/unhide).
+
 package com.camerashop.controller;
 
 import java.util.List;

@@ -1,3 +1,5 @@
+// Next.js config: proxy /uploads to the backend, allow Cloudinary images, raise the Server Action body limit for image uploads.
+
 import type { NextConfig } from "next";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8080";

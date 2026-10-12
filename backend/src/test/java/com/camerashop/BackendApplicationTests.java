@@ -1,3 +1,5 @@
+// Smoke test: the Spring context starts against a real PostgreSQL container.
+
 package com.camerashop;
 
 import org.junit.jupiter.api.Test;

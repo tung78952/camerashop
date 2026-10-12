@@ -1,3 +1,5 @@
+-- Refreshes sample models and their image galleries; main image = first gallery image.
+
 UPDATE products SET name = 'Sony Alpha 7C II',
     description = 'Full-frame 33MP nhỏ gọn, lấy nét AI nhận diện chủ thể, chống rung 7 stop, quay 4K 60p.'
     WHERE name = 'Sony Alpha 7 III';

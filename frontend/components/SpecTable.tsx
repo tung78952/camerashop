@@ -1,3 +1,5 @@
+// Grouped technical specs table; long tables are collapsed with a "show all" button.
+
 "use client";
 
 import { useRef, useState } from "react";
@@ -9,6 +11,7 @@ const COLLAPSED_ROWS = 10;
 
 type SpecGroup = { name: string | null; rows: Spec[] };
 
+// Groups consecutive rows with the same group name, keeping order.
 function groupSpecs(specs: Spec[]): SpecGroup[] {
   const groups: SpecGroup[] = [];
   for (const spec of specs) {
@@ -22,6 +25,7 @@ function groupSpecs(specs: Spec[]): SpecGroup[] {
   return groups;
 }
 
+// First N rows for the collapsed view.
 function takeRows(groups: SpecGroup[], limit: number): SpecGroup[] {
   const result: SpecGroup[] = [];
   let left = limit;

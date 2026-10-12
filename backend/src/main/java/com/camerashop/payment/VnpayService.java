@@ -1,3 +1,5 @@
+// VNPay signing: builds the signed payment URL and verifies the HMAC-SHA512 signature of returned results.
+
 package com.camerashop.payment;
 
 import java.net.URLEncoder;
@@ -44,6 +46,7 @@ public class VnpayService {
         return !tmnCode.isBlank() && !hashSecret.isBlank();
     }
 
+    // Sorted parameters, URL-encoded, signed with the hash secret.
     public String buildPaymentUrl(String txnRef, long amountVnd, String orderInfo, String ipAddr) {
         return buildPaymentUrl(txnRef, amountVnd, orderInfo, ipAddr, LocalDateTime.now(VIETNAM));
     }
@@ -67,6 +70,7 @@ public class VnpayService {
         return payUrl + "?" + encode(params) + "&vnp_SecureHash=" + sign(params);
     }
 
+    // Recomputes the signature and compares it in constant time.
     public boolean verify(Map<String, String> vnpParams) {
         String receivedHash = vnpParams.get("vnp_SecureHash");
         if (receivedHash == null || hashSecret.isBlank()) {
@@ -96,6 +100,7 @@ public class VnpayService {
         return joiner.toString();
     }
 
+    // HMAC-SHA512 as lowercase hex.
     static String hmacSha512(String key, String data) {
         try {
             Mac mac = Mac.getInstance("HmacSHA512");

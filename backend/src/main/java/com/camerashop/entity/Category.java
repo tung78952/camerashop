@@ -1,3 +1,5 @@
+// Product category (camera, lens, battery & charger, memory card).
+
 package com.camerashop.entity;
 
 import jakarta.persistence.Entity;

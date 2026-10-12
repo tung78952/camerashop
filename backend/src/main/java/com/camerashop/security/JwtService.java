@@ -1,3 +1,5 @@
+// Issues signed JWTs (HS256) containing the user id, email, name and role.
+
 package com.camerashop.security;
 
 import java.time.Duration;

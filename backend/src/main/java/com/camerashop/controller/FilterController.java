@@ -1,3 +1,5 @@
+// Filter options endpoint.
+
 package com.camerashop.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;

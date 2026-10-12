@@ -1,3 +1,5 @@
+// Product card used in listings: image, brand, name, mount, rating and price range.
+
 import Link from "next/link";
 
 import ProductImage from "@/components/ProductImage";

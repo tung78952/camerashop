@@ -1,3 +1,5 @@
+// VNPay signing tests: signed URL, valid signature, tampered amount, forged result, missing signature.
+
 package com.camerashop.payment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

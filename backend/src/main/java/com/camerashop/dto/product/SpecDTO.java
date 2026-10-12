@@ -1,3 +1,5 @@
+// One technical spec row, used both in responses and in the admin form.
+
 package com.camerashop.dto.product;
 
 import com.camerashop.entity.ProductSpec;

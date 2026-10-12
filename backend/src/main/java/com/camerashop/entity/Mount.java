@@ -1,3 +1,5 @@
+// Lens mount (Sony E, Canon RF, Nikon Z, Fujifilm X) used to match lenses with cameras.
+
 package com.camerashop.entity;
 
 import jakarta.persistence.Entity;
