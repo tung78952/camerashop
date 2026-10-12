@@ -1,0 +1,17 @@
+Xin chào [(${customerName})],
+
+[(${intro})]
+
+Sản phẩm:
+[# th:each="item : ${items}"]  - [(${item.productName})] ([(${item.variantName})]) x [(${item.quantity})] = [(${item.lineTotal})]
+[/]
+Tổng tiền: [(${total})]
+Thanh toán: [(${payment})]
+
+Giao tới: [(${receiver})]
+Địa chỉ: [(${address})]
+Trạng thái: [(${status})]
+
+Xem đơn hàng: [(${orderUrl})]
+
+Cảm ơn bạn đã mua sắm tại CameraShop!
