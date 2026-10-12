@@ -37,15 +37,16 @@ public class BrevoEmailSender implements EmailSender {
     record Contact(String name, String email) {
     }
 
-    record BrevoEmail(Contact sender, List<Contact> to, String subject, String textContent) {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    record BrevoEmail(Contact sender, List<Contact> to, String subject, String textContent, String htmlContent) {
     }
 
     @Override
-    public void send(String from, String to, String subject, String text) {
+    public void send(String from, String to, String subject, String text, String html) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new EmailSendException("Thiếu BREVO_API_KEY", null);
         }
-        BrevoEmail body = new BrevoEmail(parse(from), List.of(new Contact(null, to)), subject, text);
+        BrevoEmail body = new BrevoEmail(parse(from), List.of(new Contact(null, to)), subject, text, html);
         try {
             restClient.post()
                     .uri("/v3/smtp/email")

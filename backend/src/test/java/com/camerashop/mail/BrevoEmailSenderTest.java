@@ -50,7 +50,7 @@ class BrevoEmailSenderTest {
     @Test
     void sendsTheRightRequest() {
         new BrevoEmailSender("TEST-KEY", baseUrl)
-                .send("CameraShop <shop@gmail.com>", "khach@test.local", "Xác nhận đơn hàng #5", "Xin chào Tùng");
+                .send("CameraShop <shop@gmail.com>", "khach@test.local", "Xác nhận đơn hàng #5", "Xin chào Tùng", "<p>Xin chào <b>Tùng</b></p>");
 
         assertEquals("POST /v3/smtp/email", receivedPath);
         assertEquals("TEST-KEY", receivedKey);
@@ -58,6 +58,7 @@ class BrevoEmailSenderTest {
         assertTrue(receivedBody.contains("\"to\":[{\"email\":\"khach@test.local\"}]"), receivedBody);
         assertTrue(receivedBody.contains("\"subject\":\"Xác nhận đơn hàng #5\""), receivedBody);
         assertTrue(receivedBody.contains("\"textContent\":\"Xin chào Tùng\""), receivedBody);
+        assertTrue(receivedBody.contains("\"htmlContent\":\"<p>Xin chào <b>Tùng</b></p>\""), receivedBody);
         assertFalse(receivedBody.contains("null"), receivedBody);
     }
 
@@ -67,7 +68,7 @@ class BrevoEmailSenderTest {
         BrevoEmailSender sender = new BrevoEmailSender("WRONG-KEY", baseUrl);
 
         assertThrows(EmailSendException.class,
-                () -> sender.send("shop@gmail.com", "khach@test.local", "Tiêu đề", "Nội dung"));
+                () -> sender.send("shop@gmail.com", "khach@test.local", "Tiêu đề", "Nội dung", null));
     }
 
     @Test
@@ -75,7 +76,7 @@ class BrevoEmailSenderTest {
         BrevoEmailSender sender = new BrevoEmailSender("", baseUrl);
 
         assertThrows(EmailSendException.class,
-                () -> sender.send("shop@gmail.com", "khach@test.local", "Tiêu đề", "Nội dung"));
+                () -> sender.send("shop@gmail.com", "khach@test.local", "Tiêu đề", "Nội dung", null));
         assertEquals(null, receivedPath);
     }
 
