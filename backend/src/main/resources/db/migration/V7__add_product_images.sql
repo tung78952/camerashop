@@ -1,5 +1,3 @@
--- Main images for sample products.
-
 UPDATE products SET image_url = '/products/sony-alpha-7-iv.jpg' WHERE name = 'Sony Alpha 7 IV';
 UPDATE products SET image_url = '/products/sony-alpha-7-iii.jpg' WHERE name = 'Sony Alpha 7 III';
 UPDATE products SET image_url = '/products/sony-alpha-6400.jpg' WHERE name = 'Sony Alpha 6400';

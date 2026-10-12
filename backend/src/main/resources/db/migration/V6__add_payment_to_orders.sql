@@ -1,5 +1,3 @@
--- Payment columns on orders (method, status, paid time, transaction number).
-
 ALTER TABLE orders
     ADD COLUMN payment_method  VARCHAR(20) NOT NULL DEFAULT 'COD'
         CHECK (payment_method IN ('COD', 'VNPAY')),
