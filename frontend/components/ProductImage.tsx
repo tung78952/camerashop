@@ -8,11 +8,11 @@ import { useState } from "react";
 import { imageSrc } from "@/lib/image";
 
 const BRAND_COLORS: Record<string, string> = {
-  Sony: "from-neutral-200 to-neutral-300 text-neutral-700",
-  Canon: "from-red-100 to-red-200 text-red-800",
-  Nikon: "from-yellow-100 to-yellow-200 text-yellow-900",
-  Fujifilm: "from-emerald-100 to-emerald-200 text-emerald-900",
-  SanDisk: "from-rose-100 to-rose-200 text-rose-900",
+  Sony: "bg-stone-100 text-stone-500",
+  Canon: "bg-rose-50 text-rose-800",
+  Nikon: "bg-amber-50 text-amber-800",
+  Fujifilm: "bg-emerald-50 text-emerald-800",
+  SanDisk: "bg-red-50 text-red-800",
 };
 
 export default function ProductImage({
@@ -36,12 +36,11 @@ export default function ProductImage({
     );
   }
 
-  const colors = (brand && BRAND_COLORS[brand]) ?? "from-gray-100 to-gray-200 text-gray-600";
+  const colors = (brand && BRAND_COLORS[brand]) ?? "bg-soft text-stone-500";
   return (
-    <div className={`absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br p-3 text-center ${colors}`}>
+    <div className={`absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-[10px] p-3 text-center ${colors}`}>
       <CategoryIcon category={category} />
-      {brand && <span className="text-xs font-bold uppercase tracking-widest opacity-70">{brand}</span>}
-      <span className="line-clamp-2 text-xs font-medium">{name}</span>
+      <span className="line-clamp-2 text-[11px] font-semibold leading-snug text-ink-2">{name}</span>
     </div>
   );
 }

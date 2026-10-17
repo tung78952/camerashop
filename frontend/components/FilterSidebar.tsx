@@ -13,6 +13,9 @@ export const PRICE_RANGES = [
   { value: "40000000-", label: "Trên 40 triệu" },
 ];
 
+export const DESKTOP_FORM_ID = "filter-desktop";
+export const MOBILE_FORM_ID = "filter-mobile";
+
 export type SelectedFilters = {
   q?: string;
   brandId?: string;
@@ -22,35 +25,47 @@ export type SelectedFilters = {
   order?: string;
 };
 
+type Props = { options: FilterOptions; selected: SelectedFilters };
+
+// Filter groups shared by both layouts.
+function groups({ options, selected }: Props) {
+  return [
+    { title: "Khoảng giá", name: "price", selected: selected.price ?? "",
+      items: PRICE_RANGES.map((range) => ({ value: range.value, label: range.label })) },
+    { title: "Danh mục", name: "categoryId", selected: selected.categoryId ?? "", items: withAll(options.categories) },
+    { title: "Thương hiệu", name: "brandId", selected: selected.brandId ?? "", items: withAll(options.brands) },
+    { title: "Ngàm", name: "mountId", selected: selected.mountId ?? "", items: withAll(options.mounts) },
+  ];
+}
+
+// "All" (no filter) plus one option per item from the backend.
+function withAll(list: Option[]) {
+  return [{ value: "", label: "Tất cả" }, ...list.map((option) => ({ value: String(option.id), label: option.name }))];
+}
+
 // Desktop: radio lists separated by dividers.
-export default function FilterSidebar({ options, selected }: { options: FilterOptions; selected: SelectedFilters }) {
+export default function FilterSidebar(props: Props) {
   return (
-    <form method="get" action="/" className="space-y-4">
-      {selected.q && <input type="hidden" name="q" value={selected.q} />}
+    <form id={DESKTOP_FORM_ID} method="get" action="/" aria-label="Bộ lọc" className="flex flex-col gap-7">
+      {props.selected.q && <input type="hidden" name="q" value={props.selected.q} />}
 
-      <FilterBox title="Sắp xếp">
-        <select name="order" defaultValue={selected.order ?? ""} className="w-full rounded border px-2 py-1.5 text-sm">
-          <option value="">Mặc định</option>
-          <option value="price_asc">Giá thấp → cao</option>
-          <option value="price_desc">Giá cao → thấp</option>
-        </select>
-      </FilterBox>
+      {groups(props).map((group, index) => (
+        <fieldset key={group.name} className={`flex flex-col ${index > 0 ? "border-t border-line pt-5" : ""}`}>
+          <legend className="float-left mb-2 text-[13px] font-semibold">{group.title}</legend>
+          {group.items.map((item) => (
+            <label key={item.value} className="clear-left flex min-h-8 cursor-pointer items-center gap-2.5 text-sm text-ink-2 hover:text-ink">
+              <input type="radio" name={group.name} value={item.value} defaultChecked={group.selected === item.value} className="size-4 accent-accent" />
+              {item.label}
+            </label>
+          ))}
+        </fieldset>
+      ))}
 
-      <FilterBox title="Lọc theo giá">
-        {PRICE_RANGES.map((range) => (
-          <RadioRow key={range.value} name="price" value={range.value} label={range.label} checked={(selected.price ?? "") === range.value} />
-        ))}
-      </FilterBox>
-
-      <OptionGroup title="Danh mục" name="categoryId" options={options.categories} selected={selected.categoryId} />
-      <OptionGroup title="Thương hiệu" name="brandId" options={options.brands} selected={selected.brandId} />
-      <OptionGroup title="Ngàm" name="mountId" options={options.mounts} selected={selected.mountId} />
-
-      <div className="flex items-center gap-3">
-        <button type="submit" className="rounded bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700">
+      <div className="flex items-center gap-4">
+        <button type="submit" className="h-11 rounded-md bg-accent px-6 text-sm font-semibold text-white hover:bg-accent-hover">
           Lọc
         </button>
-        <Link href="/" className="text-sm text-gray-500 hover:text-red-600">
+        <Link href="/" className="text-sm text-muted underline underline-offset-[3px] hover:text-accent">
           Xóa bộ lọc
         </Link>
       </div>
@@ -58,31 +73,42 @@ export default function FilterSidebar({ options, selected }: { options: FilterOp
   );
 }
 
-function FilterBox({ title, children }: { title: string; children: React.ReactNode }) {
+// Phone: chip buttons (hidden radios + has-checked styling), used inside the filter sheet.
+export function FilterChips(props: Props) {
   return (
-    <div className="rounded-lg border bg-white p-4">
-      <h3 className="mb-3 border-b-2 border-red-600 pb-2 text-sm font-bold uppercase">{title}</h3>
-      <div className="space-y-1.5">{children}</div>
-    </div>
+    <form id={MOBILE_FORM_ID} method="get" action="/" className="flex min-h-0 flex-1 flex-col">
+      {props.selected.q && <input type="hidden" name="q" value={props.selected.q} />}
+
+      <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-5">
+        {groups(props).map((group) => (
+          <fieldset key={group.name} className="flex flex-wrap gap-2">
+            <legend className="mb-2.5 text-[13px] font-semibold">{group.title}</legend>
+            {group.items.map((item) => (
+              <label
+                key={item.value}
+                className="inline-flex h-10 cursor-pointer items-center rounded-full border border-line-strong bg-surface px-4 text-sm has-checked:border-ink has-checked:bg-ink has-checked:font-medium has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent"
+              >
+                <input type="radio" name={group.name} value={item.value} defaultChecked={group.selected === item.value} className="sr-only" />
+                {item.label}
+              </label>
+            ))}
+          </fieldset>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-[1fr_2fr] gap-2.5 border-t border-line px-5 pb-5 pt-3">
+        <Link href="/" className="flex h-12.5 items-center justify-center rounded-lg border border-line-strong text-[15px] font-medium">
+          Xóa bộ lọc
+        </Link>
+        <button type="submit" className="h-12.5 rounded-lg bg-accent text-[15px] font-semibold text-white">
+          Lọc
+        </button>
+      </div>
+    </form>
   );
 }
 
-function OptionGroup({ title, name, options, selected }: { title: string; name: string; options: Option[]; selected?: string }) {
-  return (
-    <FilterBox title={title}>
-      <RadioRow name={name} value="" label="Tất cả" checked={!selected} />
-      {options.map((option) => (
-        <RadioRow key={option.id} name={name} value={String(option.id)} label={option.name} checked={selected === String(option.id)} />
-      ))}
-    </FilterBox>
-  );
-}
-
-function RadioRow({ name, value, label, checked }: { name: string; value: string; label: string; checked: boolean }) {
-  return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm">
-      <input type="radio" name={name} value={value} defaultChecked={checked} className="accent-red-600" />
-      {label}
-    </label>
-  );
+// Number of active filters (badge on the phone filter button).
+export function countActive(selected: SelectedFilters): number {
+  return [selected.price, selected.categoryId, selected.brandId, selected.mountId].filter((value) => Boolean(value)).length;
 }
