@@ -1,4 +1,4 @@
-// Admin layout with the Orders / Products tabs.
+// Admin layout: "Admin" title with the Orders / Products switch.
 
 import { getSession } from "@/lib/session";
 

@@ -1,4 +1,4 @@
-// Admin orders table with status actions.
+// Admin orders: a table on desktop, cards on phones, with status actions.
 
 import Link from "next/link";
 import { redirect } from "next/navigation";

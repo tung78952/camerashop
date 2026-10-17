@@ -1,4 +1,4 @@
-// Checkout form: shipping info and payment method (COD or VNPay redirect).
+// Checkout form covering the whole page: shipping info, payment method (COD or VNPay redirect) and the order summary with the submit button.
 
 "use client";
 
@@ -71,7 +71,7 @@ export default function CheckoutForm() {
   );
 }
 
-// One selectable payment method.
+// One selectable payment method (hidden radio inside a card).
 function PaymentOption({
   value,
   selected,
@@ -98,6 +98,7 @@ function PaymentOption({
   );
 }
 
+// One labelled input.
 function Field({
   label,
   name,

@@ -4,36 +4,33 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-16 bg-neutral-900 text-neutral-300">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-6 py-10 sm:grid-cols-3">
-        <div>
-          <p className="mb-3 text-xl font-extrabold text-white">
-            <span className="text-red-500">Camera</span>Shop
+    <footer className="mt-16 bg-ink text-line-strong">
+      <div className="mx-auto grid w-full max-w-300 gap-7 px-4 pb-6 pt-10 text-sm sm:grid-cols-3 sm:gap-10 md:px-6 md:pb-8 md:pt-14">
+        <div className="flex flex-col gap-3">
+          <p className="text-lg tracking-tight text-white">
+            <b className="font-bold">TCamera</b>
+            <span className="font-medium text-red-400">Shop</span>
           </p>
-          <p className="text-sm leading-relaxed">
+          <p className="max-w-75 leading-relaxed">
             Máy ảnh, ống kính và phụ kiện chính hãng. Gợi ý ống kính, pin, sạc dùng được với máy của bạn.
           </p>
         </div>
 
-        <div>
-          <p className="mb-3 font-semibold uppercase text-white">Mua sắm</p>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="/" className="hover:text-white">Tất cả sản phẩm</Link></li>
-            <li><Link href="/?order=price_asc" className="hover:text-white">Giá tốt nhất</Link></li>
-            <li><Link href="/cart" className="hover:text-white">Giỏ hàng</Link></li>
-          </ul>
+        <div className="flex flex-col gap-2.5">
+          <p className="text-[13px] font-semibold text-white">Mua sắm</p>
+          <Link href="/" className="hover:text-white">Tất cả sản phẩm</Link>
+          <Link href="/?order=price_asc" className="hover:text-white">Giá tốt nhất</Link>
+          <Link href="/cart" className="hover:text-white">Giỏ hàng</Link>
         </div>
 
-        <div>
-          <p className="mb-3 font-semibold uppercase text-white">Về dự án</p>
-          <p className="text-sm leading-relaxed">
-            Dự án portfolio (Spring Boot + Next.js) — trang demo, không bán hàng thật.
-          </p>
+        <div className="flex flex-col gap-2.5">
+          <p className="text-[13px] font-semibold text-white">Về dự án</p>
+          <p className="leading-relaxed">Dự án portfolio (Spring Boot + Next.js) — trang demo, không bán hàng thật.</p>
         </div>
       </div>
 
-      <div className="border-t border-neutral-800 py-4 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} CameraShop · Demo project
+      <div className="mx-auto w-full max-w-300 border-t border-ink-2 px-4 pb-7 pt-5 text-xs text-stone-400 md:px-6 md:text-[13px]">
+        © {new Date().getFullYear()} TCameraShop · Demo project
       </div>
     </footer>
   );

@@ -1,4 +1,4 @@
-// "My orders" page.
+// "My orders" page: a table on desktop, cards on phones (plus a logout button, which the phone header lacks).
 
 import Link from "next/link";
 import { redirect } from "next/navigation";

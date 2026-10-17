@@ -1,4 +1,4 @@
-// Product filters (sort, price range, category, brand, mount) as a plain GET form, so filters live in the URL.
+// Product filters (price range, category, brand, mount) as plain GET forms, so filters live in the URL: a sidebar on desktop, chips on phones.
 
 import Link from "next/link";
 
@@ -22,6 +22,7 @@ export type SelectedFilters = {
   order?: string;
 };
 
+// Desktop: radio lists separated by dividers.
 export default function FilterSidebar({ options, selected }: { options: FilterOptions; selected: SelectedFilters }) {
   return (
     <form method="get" action="/" className="space-y-4">
@@ -66,7 +67,6 @@ function FilterBox({ title, children }: { title: string; children: React.ReactNo
   );
 }
 
-// One radio group with an "All" option.
 function OptionGroup({ title, name, options, selected }: { title: string; name: string; options: Option[]; selected?: string }) {
   return (
     <FilterBox title={title}>

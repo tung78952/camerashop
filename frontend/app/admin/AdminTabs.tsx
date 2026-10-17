@@ -1,4 +1,4 @@
-// Admin navigation tabs.
+// Admin section switch (segmented control); highlights the open section.
 
 "use client";
 
