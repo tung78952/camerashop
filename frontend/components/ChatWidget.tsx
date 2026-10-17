@@ -14,7 +14,7 @@ import { imageSrc } from "@/lib/image";
 
 type Line = ChatMessage & { products?: ChatProduct[]; error?: boolean };
 
-const WELCOME = "Chào bạn! Mình là trợ lý AI của CameraShop. Bạn cho mình biết ngân sách và nhu cầu (chụp gì, quay gì, đang dùng máy nào), mình gợi ý sản phẩm có sẵn trong shop nhé.";
+const WELCOME = "Chào bạn! Mình là trợ lý AI của TCameraShop. Bạn cho mình biết ngân sách và nhu cầu (chụp gì, quay gì, đang dùng máy nào), mình gợi ý sản phẩm có sẵn trong shop nhé.";
 
 const SUGGESTIONS = [
   "Máy ảnh dưới 25 triệu để quay vlog",
@@ -67,35 +67,46 @@ export default function ChatWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-red-600 px-5 py-3 font-semibold text-white shadow-lg hover:bg-red-700"
+          aria-label="Tư vấn AI"
+          className="fixed bottom-4 right-4 z-40 flex size-14 items-center justify-center gap-2.5 rounded-full bg-ink font-semibold text-white shadow-[0_8px_24px_rgba(28,25,23,.22)] hover:bg-ink-2 md:bottom-6 md:right-6 md:h-13 md:w-auto md:pl-4.5 md:pr-5.5 md:text-sm"
         >
-          <span aria-hidden>💬</span> Tư vấn AI
+          <ChatIcon size={22} />
+          <span className="hidden md:inline">Tư vấn AI</span>
         </button>
       )}
 
       {open && (
-        <div className="fixed bottom-5 right-5 z-40 flex h-[560px] max-h-[80vh] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl border bg-white shadow-2xl">
-          <div className="flex items-start justify-between bg-red-600 px-4 py-3 text-white">
-            <div>
-              <p className="font-semibold">Trợ lý CameraShop</p>
-              <p className="text-xs text-red-100">AI tư vấn dựa trên hàng có trong shop</p>
+        <section
+          role="dialog"
+          aria-labelledby="chat-title"
+          className="fixed inset-x-3 bottom-3 z-40 flex h-[85vh] flex-col overflow-hidden rounded-2xl border border-line bg-surface text-sm shadow-[0_16px_48px_rgba(28,25,23,.16)] md:inset-x-auto md:bottom-6 md:right-6 md:h-175 md:max-h-[80vh] md:w-100"
+        >
+          <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line pl-4.5 pr-2">
+            <span aria-hidden="true" className="flex size-8.5 items-center justify-center rounded-full bg-ink text-white">
+              <ChatIcon size={18} />
+            </span>
+            <div className="mr-auto flex flex-col">
+              <h2 id="chat-title" className="text-[15px] font-bold">Tư vấn AI</h2>
+              <span className="text-xs text-muted">Gợi ý dựa trên hàng có trong shop</span>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Đóng khung chat" className="text-2xl leading-none hover:text-red-100">
-              ×
+            <button type="button" onClick={() => setOpen(false)} aria-label="Đóng khung chat" className="flex size-11 items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
             </button>
-          </div>
+          </header>
 
-          <div className="flex-1 space-y-3 overflow-y-auto bg-neutral-50 p-3 text-sm">
+          <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto bg-bg p-4.5">
             <Bubble line={{ role: "assistant", text: WELCOME }} />
 
             {lines.length === 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col items-start gap-2">
                 {SUGGESTIONS.map((suggestion) => (
                   <button
                     key={suggestion}
                     type="button"
                     onClick={() => ask(suggestion)}
-                    className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs text-red-700 hover:bg-red-50"
+                    className="min-h-10 rounded-full border border-line-strong bg-surface px-3.5 py-2 text-left text-[13px] hover:border-ink"
                   >
                     {suggestion}
                   </button>
@@ -107,7 +118,16 @@ export default function ChatWidget() {
               <Bubble key={index} line={line} />
             ))}
 
-            {loading && <p className="text-xs italic text-gray-500">Trợ lý đang trả lời...</p>}
+            {loading && (
+              <p role="status" className="flex items-center gap-2 text-[13px] text-muted">
+                <span aria-hidden="true" className="flex gap-1">
+                  <span className="size-1.5 animate-pulse rounded-full bg-stone-400" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-stone-400 [animation-delay:150ms]" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-stone-400 [animation-delay:300ms]" />
+                </span>
+                Trợ lý đang trả lời…
+              </p>
+            )}
             <div ref={bottomRef} />
           </div>
 
@@ -116,27 +136,43 @@ export default function ChatWidget() {
               event.preventDefault();
               ask(input);
             }}
-            className="flex gap-2 border-t p-3"
+            className="flex shrink-0 flex-col gap-2 border-t border-line px-3.5 pb-2.5 pt-3"
           >
-            <input
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              maxLength={500}
-              placeholder="Hỏi về máy ảnh, ống kính, ngân sách..."
-              className="flex-1 rounded border px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
-            >
-              Gửi
-            </button>
+            <div className="flex gap-2">
+              <input
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                maxLength={500}
+                aria-label="Tin nhắn"
+                placeholder="Hỏi về máy ảnh, ống kính, ngân sách…"
+                className="h-11 min-w-0 flex-1 rounded-full border border-line-strong px-3.5 outline-none focus:border-ink"
+              />
+              <button
+                type="submit"
+                disabled={loading || !input.trim()}
+                className="flex h-11 items-center gap-1.5 rounded-full bg-accent px-4.5 font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+              >
+                Gửi
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-center text-[11px] text-muted">AI có thể nhầm — giá và tồn kho xem chính xác ở trang sản phẩm.</p>
           </form>
-          <p className="px-3 pb-2 text-center text-[11px] text-gray-400">AI có thể nhầm — giá và tồn kho xem chính xác ở trang sản phẩm.</p>
-        </div>
+        </section>
       )}
     </>
+  );
+}
+
+// Chat bubble icon.
+function ChatIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 5h16v11H9l-5 4z" />
+      <path d="M8 10h8M8 13h5" />
+    </svg>
   );
 }
 
@@ -144,34 +180,38 @@ export default function ChatWidget() {
 function Bubble({ line }: { line: Line }) {
   const isUser = line.role === "user";
   return (
-    <div className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}>
+    <div className={`flex flex-col gap-2.5 ${isUser ? "items-end" : "items-start"}`}>
       <p
-        className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 ${
-          isUser ? "bg-red-600 text-white" : line.error ? "border border-red-200 bg-red-50 text-red-700" : "border bg-white text-gray-800"
+        className={`max-w-[85%] whitespace-pre-line rounded-[14px] px-3.5 py-2.5 leading-relaxed ${
+          isUser
+            ? "rounded-br-sm bg-ink text-white"
+            : line.error
+              ? "rounded-bl-sm border border-red-200 bg-red-50 text-red-700"
+              : "rounded-bl-sm border border-line bg-surface"
         }`}
       >
         {line.text}
       </p>
 
       {line.products && line.products.length > 0 && (
-        <div className="mt-2 w-[85%] space-y-2">
+        <div className="flex w-[92%] flex-col gap-2">
           {line.products.map((product) => (
             <Link
               key={product.id}
               href={`/products/${product.id}`}
-              className="flex items-center gap-3 rounded-lg border bg-white p-2 hover:border-red-500"
+              className="flex items-center gap-3 rounded-xl border border-line bg-surface p-2 pr-3.5 hover:border-line-strong"
             >
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-white">
+              <span className="relative size-13 shrink-0 overflow-hidden rounded-lg border border-line bg-surface">
                 {product.imageUrl && (
-                  <Image src={imageSrc(product.imageUrl)} alt={product.name} fill sizes="48px" className="object-contain" unoptimized />
+                  <Image src={imageSrc(product.imageUrl)} alt="" fill sizes="52px" className="object-contain p-1" unoptimized />
                 )}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{product.name}</p>
+              </span>
+              <span className="flex min-w-0 flex-col">
+                <span className="truncate font-semibold">{product.name}</span>
                 {product.minPrice != null && (
-                  <p className="text-xs font-semibold text-red-600">từ {formatPrice(product.minPrice)}</p>
+                  <span className="price text-[13px] font-semibold text-accent">từ {formatPrice(product.minPrice)}</span>
                 )}
-              </div>
+              </span>
             </Link>
           ))}
         </div>

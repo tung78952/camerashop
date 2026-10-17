@@ -5,6 +5,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import TextField from "@/components/TextField";
 import { loginAction } from "@/lib/actions";
 
 export default function LoginForm({ next }: { next: string }) {
@@ -27,24 +28,17 @@ export default function LoginForm({ next }: { next: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium">Email</span>
-        <input name="email" type="email" required autoComplete="email"
-          className="w-full rounded border px-3 py-2 outline-none focus:border-red-600" />
-      </label>
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium">Mật khẩu</span>
-        <input name="password" type="password" required autoComplete="current-password"
-          className="w-full rounded border px-3 py-2 outline-none focus:border-red-600" />
-      </label>
-
-      {error && <p className="rounded bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
+      <TextField label="Email" name="email" type="email" autoComplete="email" placeholder="ban@email.com" />
+      <TextField label="Mật khẩu" name="password" type="password" autoComplete="current-password" />
 
       <button type="submit" disabled={loading}
-        className="w-full rounded bg-red-600 py-2.5 font-semibold text-white hover:bg-red-700 disabled:opacity-50">
-        {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+        className="flex h-12.5 items-center justify-center gap-2.5 rounded-lg bg-accent text-[15px] font-semibold text-white hover:bg-accent-hover disabled:opacity-70">
+        {loading && <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
+        {loading ? "Đang đăng nhập…" : "Đăng nhập"}
       </button>
+
+      {error && <p role="alert" className="-mt-1.5 text-[13px] text-red-700">{error}</p>}
     </form>
   );
 }

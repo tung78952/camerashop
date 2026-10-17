@@ -2,9 +2,9 @@
 
 export default function Loading() {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-3 p-6 py-24">
-      <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-red-600" aria-hidden />
-      <p className="text-sm text-gray-500">Đang tải...</p>
+    <main role="status" className="flex flex-1 flex-col items-center justify-center gap-4 px-4 py-24 text-muted">
+      <span aria-hidden="true" className="size-10 animate-spin rounded-full border-[3px] border-line border-t-accent" />
+      <span className="text-[15px]">Đang tải…</span>
     </main>
   );
 }
