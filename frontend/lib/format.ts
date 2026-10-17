@@ -30,14 +30,14 @@ export function formatOrderStatus(status: string): string {
 }
 
 const ORDER_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800",
+  PENDING: "bg-amber-100 text-amber-800",
   SHIPPING: "bg-blue-100 text-blue-800",
   COMPLETED: "bg-green-100 text-green-800",
-  CANCELLED: "bg-gray-200 text-gray-600",
+  CANCELLED: "bg-line text-ink-2",
 };
 
 export function orderStatusColor(status: string): string {
-  return ORDER_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
+  return ORDER_STATUS_COLORS[status] ?? "bg-line text-ink-2";
 }
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -59,14 +59,19 @@ export function formatPaymentStatus(status: string): string {
   return PAYMENT_STATUS_LABELS[status] ?? status;
 }
 
-const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  UNPAID: "bg-orange-100 text-orange-800",
-  PAID: "bg-green-100 text-green-800",
-  FAILED: "bg-gray-200 text-gray-600",
+const PAYMENT_STATUS_COLORS: Record<string, [string, string]> = {
+  UNPAID: ["border-line-strong text-ink-2", "bg-stone-400"],
+  PAID: ["border-green-300 text-green-800", "bg-green-600"],
+  FAILED: ["border-red-300 text-red-700", "bg-red-600"],
 };
 
 export function paymentStatusColor(status: string): string {
-  return PAYMENT_STATUS_COLORS[status] ?? "bg-gray-100 text-gray-700";
+  return (PAYMENT_STATUS_COLORS[status] ?? PAYMENT_STATUS_COLORS.UNPAID)[0];
+}
+
+// Dot color for the payment status badge.
+export function paymentStatusDot(status: string): string {
+  return (PAYMENT_STATUS_COLORS[status] ?? PAYMENT_STATUS_COLORS.UNPAID)[1];
 }
 
 // One price, or "min - max" when variants differ.

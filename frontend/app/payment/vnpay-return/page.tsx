@@ -26,29 +26,38 @@ export default async function VnpayReturnPage({ searchParams }: PageProps<"/paym
     }
   }
 
-  return (
-    <main className="mx-auto w-full max-w-xl p-6 text-center">
-      <div className={`rounded-lg border p-8 ${result.paid ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
-        <p className="text-5xl">{result.paid ? "✅" : "❌"}</p>
-        <h1 className={`mt-4 text-2xl font-bold ${result.paid ? "text-green-800" : "text-red-800"}`}>
-          {result.message}
-        </h1>
-        {result.orderId && (
-          <p className="mt-2 text-sm text-gray-600">Đơn hàng #{result.orderId}</p>
-        )}
-        {result.paid && (
-          <p className="mt-2 text-sm text-gray-600">CameraShop đã gửi mail xác nhận thanh toán cho bạn.</p>
-        )}
-      </div>
+  const orderHref = result.orderId ? `/orders/${result.orderId}` : "/orders";
 
-      <div className="mt-6 flex justify-center gap-4 text-sm">
+  return (
+    <main className="flex flex-1 justify-center px-4 pb-24 pt-12 md:pt-18">
+      <section role="status" className="flex w-full max-w-120 flex-col items-center gap-3.5 rounded-2xl border border-line bg-surface px-6 pb-8 pt-12 text-center md:px-8">
+        <span
+          aria-hidden="true"
+          className={`flex size-18 items-center justify-center rounded-full ${result.paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"}`}
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d={result.paid ? "m5 12 5 5 9-10" : "M6 6l12 12M18 6 6 18"} />
+          </svg>
+        </span>
+        <h1 className="mt-1.5 text-2xl font-bold leading-tight">{result.message}</h1>
+        {result.paid && <p className="max-w-90 text-ink-2">TCameraShop đã gửi mail xác nhận thanh toán cho bạn.</p>}
+
         {result.orderId && (
-          <Link href={`/orders/${result.orderId}`} className="font-medium text-red-600 hover:underline">
-            Xem đơn hàng
-          </Link>
+          <dl className="mt-3 grid w-full grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-t border-line pt-4 text-left text-sm">
+            <dt className="text-muted">Mã đơn</dt>
+            <dd className="text-right font-semibold">#{result.orderId}</dd>
+          </dl>
         )}
-        <Link href="/" className="text-gray-600 hover:text-red-600">Tiếp tục mua sắm</Link>
-      </div>
+
+        <div className="mt-3 flex w-full flex-col gap-2.5">
+          <Link href={orderHref} className="flex h-12.5 items-center justify-center rounded-lg bg-ink font-semibold text-white hover:bg-ink-2">
+            {result.orderId ? "Xem đơn hàng" : "Xem đơn hàng của tôi"}
+          </Link>
+          <Link href="/" className="flex h-12.5 items-center justify-center rounded-lg border border-line-strong font-medium hover:border-ink">
+            Tiếp tục mua sắm
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

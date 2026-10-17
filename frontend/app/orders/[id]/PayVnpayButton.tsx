@@ -25,13 +25,14 @@ export default function PayVnpayButton({ orderId }: { orderId: number }) {
   return (
     <div>
       <button
+        type="button"
         onClick={handleClick}
         disabled={loading}
-        className="rounded bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+        className="h-11 rounded-lg bg-accent px-5.5 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-70"
       >
-        {loading ? "Đang chuyển sang VNPay..." : "Thanh toán qua VNPay"}
+        {loading ? "Đang chuyển sang VNPay…" : "Thanh toán VNPay"}
       </button>
-      {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-2 max-w-60 text-sm text-red-700">{error}</p>}
     </div>
   );
 }

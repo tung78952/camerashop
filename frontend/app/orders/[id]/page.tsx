@@ -3,16 +3,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { OrderStatusBadge, PaymentStatusBadge } from "@/components/StatusBadge";
 import { getMyOrder } from "@/lib/api";
-import {
-  formatDateTime,
-  formatOrderStatus,
-  formatPaymentMethod,
-  formatPaymentStatus,
-  formatPrice,
-  orderStatusColor,
-  paymentStatusColor,
-} from "@/lib/format";
+import { formatDateTime, formatPaymentMethod, formatPrice } from "@/lib/format";
 import { getSession } from "@/lib/session";
 
 import CancelOrderButton from "./CancelOrderButton";
@@ -30,73 +23,107 @@ export default async function OrderDetailPage({ params, searchParams }: PageProp
     notFound();
   }
 
+  const canCancel = order.status === "PENDING" && order.paymentStatus !== "PAID";
+  const canPay = order.paymentMethod === "VNPAY" && order.paymentStatus === "UNPAID" && order.status === "PENDING";
+
   return (
-    <main className="mx-auto w-full max-w-3xl p-6">
+    <main className="mx-auto flex w-full max-w-250 flex-col gap-6 px-4 pb-14 pt-6 md:px-6 md:pb-24 md:pt-8">
+      <Link href="/orders" className="inline-flex w-fit items-center gap-1.5 text-sm text-muted hover:text-accent">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <path d="m15 6-6 6 6 6" />
+        </svg>
+        Đơn hàng của tôi
+      </Link>
+
       {success === "1" && (
-        <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-green-800">
-          <p className="text-lg font-semibold">🎉 Đặt hàng thành công!</p>
-          <p className="text-sm">Cảm ơn bạn. Shop sẽ gọi xác nhận trong thời gian sớm nhất.</p>
-        </div>
-      )}
-
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">Đơn hàng #{order.id}</h1>
-        <span className={`rounded-full px-3 py-1 text-sm font-medium ${orderStatusColor(order.status)}`}>
-          {formatOrderStatus(order.status)}
-        </span>
-      </div>
-      <p className="mb-6 text-sm text-gray-500">Đặt lúc {formatDateTime(order.createdAt)}</p>
-
-      {order.status === "PENDING" && order.paymentStatus !== "PAID" && (
-        <div className="mb-6">
-          <CancelOrderButton orderId={order.id} />
-        </div>
-      )}
-
-      <section className="mb-6 rounded-lg border bg-white p-5 text-sm">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-semibold">Thanh toán</h2>
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${paymentStatusColor(order.paymentStatus)}`}>
-            {formatPaymentStatus(order.paymentStatus)}
+        <div role="status" className="flex items-center gap-3.5 rounded-xl border border-green-200 bg-green-50 px-5 py-4.5 text-green-800">
+          <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m5 12 5 5 9-10" />
+            </svg>
+          </span>
+          <span className="flex flex-col">
+            <b className="text-base font-bold">Đặt hàng thành công!</b>
+            <span className="text-sm">Cảm ơn bạn. Shop sẽ xác nhận đơn sớm.</span>
           </span>
         </div>
-        <p>{formatPaymentMethod(order.paymentMethod)}</p>
-        {order.paidAt && <p className="text-gray-500">Đã thanh toán lúc {formatDateTime(order.paidAt)}</p>}
-        {order.paymentMethod === "VNPAY" && order.paymentStatus === "UNPAID" && order.status === "PENDING" && (
-          <div className="mt-3">
-            <PayVnpayButton orderId={order.id} />
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-[30px]">Đơn hàng #{order.id}</h1>
+            <OrderStatusBadge status={order.status} />
+          </div>
+          <span className="text-sm text-muted">Đặt lúc {formatDateTime(order.createdAt)}</span>
+        </div>
+        {(canCancel || canPay) && (
+          <div className="flex flex-wrap items-start gap-3">
+            {canPay && <PayVnpayButton orderId={order.id} />}
+            {canCancel && <CancelOrderButton orderId={order.id} />}
           </div>
         )}
-      </section>
+      </div>
 
-      <section className="mb-6 rounded-lg border bg-white p-5 text-sm">
-        <h2 className="mb-2 font-semibold">Giao đến</h2>
-        <p>{order.receiverName} · {order.phone}</p>
-        <p className="text-gray-600">{order.address}</p>
-      </section>
+      {order.status === "CANCELLED" ? (
+        <p className="rounded-xl bg-soft px-5 py-4 text-sm text-ink-2">Đơn hàng này đã bị hủy.</p>
+      ) : (
+        <OrderSteps status={order.status} />
+      )}
 
-      <section className="rounded-lg border bg-white p-5">
-        <ul className="divide-y text-sm">
+      <div className="grid gap-4 md:grid-cols-2">
+        <section className="flex flex-col items-start gap-3 rounded-xl border border-line bg-surface p-6">
+          <h2 className="text-[13px] font-semibold text-muted">Thanh toán</h2>
+          <span className="font-semibold">{formatPaymentMethod(order.paymentMethod)}</span>
+          <PaymentStatusBadge status={order.paymentStatus} />
+          {order.paidAt && <span className="text-[13px] text-muted">Trả lúc {formatDateTime(order.paidAt)}</span>}
+        </section>
+
+        <section className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface p-6">
+          <h2 className="mb-1.5 text-[13px] font-semibold text-muted">Giao đến</h2>
+          <span className="font-semibold">{order.receiverName} · {order.phone}</span>
+          <span className="text-ink-2">{order.address}</span>
+        </section>
+      </div>
+
+      <section aria-label="Các món" className="rounded-xl border border-line bg-surface">
+        <ul className="px-5 md:px-6">
           {order.items.map((item) => (
-            <li key={`${item.productId}-${item.variantName}`} className="flex justify-between gap-3 py-2">
-              <span>
-                <Link href={`/products/${item.productId}`} className="hover:text-red-600">{item.productName}</Link>{" "}
-                <span className="text-gray-500">({item.variantName})</span> × {item.quantity}
+            <li key={`${item.productId}-${item.variantName}`} className="flex items-center gap-4 border-b border-line py-5">
+              <span className="flex min-w-0 flex-1 flex-col">
+                <Link href={`/products/${item.productId}`} className="font-semibold hover:text-accent">{item.productName}</Link>
+                <span className="price text-[13px] text-muted">
+                  {item.variantName} · {formatPrice(item.unitPrice)} × {item.quantity}
+                </span>
               </span>
-              <span className="shrink-0">{formatPrice(item.lineTotal)}</span>
+              <span className="price shrink-0 font-bold">{formatPrice(item.lineTotal)}</span>
             </li>
           ))}
         </ul>
-        <div className="mt-4 flex justify-between border-t pt-4">
+        <div className="flex items-baseline justify-between px-5 py-5 md:px-6">
           <span className="font-semibold">Tổng cộng</span>
-          <span className="text-xl font-bold text-red-600">{formatPrice(order.totalAmount)}</span>
+          <span className="price text-2xl font-bold text-accent">{formatPrice(order.totalAmount)}</span>
         </div>
       </section>
-
-      <div className="mt-6 flex gap-4 text-sm">
-        <Link href="/orders" className="text-gray-600 hover:text-red-600">← Đơn hàng của tôi</Link>
-        <Link href="/" className="text-gray-600 hover:text-red-600">Tiếp tục mua sắm</Link>
-      </div>
     </main>
+  );
+}
+
+// Three-step progress bar (pending, shipping, completed).
+function OrderSteps({ status }: { status: string }) {
+  const steps = ["Chờ xác nhận", "Đang giao", "Hoàn thành"];
+  const current = { PENDING: 0, SHIPPING: 1, COMPLETED: 2 }[status] ?? 0;
+  return (
+    <ol aria-label="Tiến trình đơn hàng" className="grid grid-cols-3 gap-3 rounded-xl border border-line bg-surface p-5 md:p-6">
+      {steps.map((name, index) => {
+        const done = index <= current;
+        return (
+          <li key={name} aria-current={index === current ? "step" : undefined} className="flex flex-col gap-2.5">
+            <span aria-hidden="true" className={`block h-1 rounded-sm ${done ? "bg-ink" : "bg-line"}`} />
+            <span className={`text-[13px] md:text-sm ${done ? "font-semibold" : "text-muted"}`}>{name}</span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
