@@ -25,39 +25,47 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
     product.category === "Máy ảnh" ? "Ống kính & phụ kiện dùng được với máy này" : "Dùng được với các máy ảnh";
 
   return (
-    <main className="mx-auto w-full max-w-6xl p-6">
-      <nav className="mb-4 text-sm text-gray-500">
-        <Link href="/" className="hover:text-red-600">Trang chủ</Link> / {product.category} / {product.name}
+    <main className="mx-auto w-full max-w-300 px-4 pb-14 pt-4 md:px-6 md:pb-20 md:pt-6">
+      <nav aria-label="Đường dẫn" className="mb-5 flex flex-wrap gap-2 text-[13px] text-muted md:mb-6">
+        <Link href="/" className="hover:text-accent">Trang chủ</Link>
+        <span aria-hidden="true">/</span>
+        <span>{product.category}</span>
+        <span aria-hidden="true">/</span>
+        <span className="text-ink">{product.name}</span>
       </nav>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 md:gap-14">
         <ProductGallery
           images={product.images} mainImage={product.imageUrl}
           name={product.name} brand={product.brand} category={product.category}
         />
 
-        <div className="space-y-4">
-          <p className="text-sm text-gray-500">
+        <section aria-label="Thông tin sản phẩm" className="flex min-w-0 flex-col">
+          <p className="text-[13px] text-muted">
             {product.brand} · {product.category}
             {product.mount && ` · Ngàm ${product.mount}`}
           </p>
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <a href="#danh-gia" className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600">
-            <Stars value={reviews.average} />
-            {reviews.count > 0
-              ? <span>{reviews.average.toLocaleString("vi-VN")} ({reviews.count} đánh giá)</span>
-              : <span>Chưa có đánh giá</span>}
+          <h1 className="mb-2 mt-1 text-[26px] font-bold leading-tight tracking-tight md:mb-2.5 md:mt-1.5 md:text-[34px]">{product.name}</h1>
+          <a href="#danh-gia" className="flex w-fit items-center gap-2 text-sm text-ink-2 hover:text-accent">
+            <Stars value={reviews.average} size="text-[15px]" />
+            {reviews.count > 0 ? (
+              <span>
+                <b className="font-semibold">{reviews.average.toLocaleString("vi-VN")}</b> · {reviews.count} đánh giá
+              </span>
+            ) : (
+              <span>Chưa có đánh giá</span>
+            )}
           </a>
 
           <VariantPicker variants={product.variants} />
 
           {product.description && (
-            <div className="border-t pt-4">
-              <h2 className="mb-2 font-semibold">Mô tả</h2>
-              <p className="whitespace-pre-line text-gray-700">{product.description}</p>
+            <div className="mt-8 border-t border-line pt-6">
+              <h2 className="mb-2 text-[13px] font-semibold">Mô tả</h2>
+              <p className="whitespace-pre-line leading-relaxed text-ink-2">{product.description}</p>
             </div>
           )}
-        </div>
+        </section>
       </div>
 
       {product.specs.length > 0 && <SpecTable specs={product.specs} />}
@@ -65,11 +73,13 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
       <ReviewSection productId={product.id} data={reviews} />
 
       {product.compatibleProducts.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-4 text-2xl font-bold">{compatibleTitle}</h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <section aria-labelledby="compatible-title" className="mt-12 md:mt-20">
+          <h2 id="compatible-title" className="mb-4 text-xl font-bold tracking-tight md:mb-7 md:text-[22px]">{compatibleTitle}</h2>
+          <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-[repeat(auto-fill,minmax(220px,1fr))] md:gap-x-6 md:gap-y-8 md:overflow-visible md:px-0">
             {product.compatibleProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <div key={p.id} className="w-40 shrink-0 md:w-auto">
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         </section>

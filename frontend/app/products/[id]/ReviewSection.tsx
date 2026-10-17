@@ -13,73 +13,76 @@ export default async function ReviewSection({ productId, data }: { productId: nu
   const maxStarCount = Math.max(1, ...data.starCounts);
 
   return (
-    <section id="danh-gia" className="mt-12 scroll-mt-4">
-      <h2 className="mb-4 text-2xl font-bold">Đánh giá sản phẩm</h2>
-
-      <div className="grid gap-6 rounded-lg border bg-white p-5 md:grid-cols-[260px_1fr]">
-        <div className="text-center md:border-r md:pr-6">
-          <p className="text-5xl font-bold">{data.count > 0 ? data.average.toLocaleString("vi-VN") : "–"}</p>
-          <Stars value={data.average} size="text-2xl" />
-          <p className="mt-1 text-sm text-gray-500">{data.count} đánh giá</p>
-
-          <div className="mt-4 space-y-1">
-            {data.starCounts.map((n, index) => (
-              <div key={index} className="flex items-center gap-2 text-xs">
-                <span className="w-6 text-right text-gray-600">{5 - index}★</span>
-                <span className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                  <span className="block h-full rounded-full bg-yellow-400" style={{ width: `${(n / maxStarCount) * 100}%` }} />
-                </span>
-                <span className="w-6 text-left text-gray-500">{n}</span>
-              </div>
-            ))}
+    <section id="danh-gia" aria-labelledby="reviews-title" className="mt-12 grid scroll-mt-28 gap-6 md:mt-20 lg:grid-cols-[220px_1fr] lg:gap-14">
+      <div className="flex flex-col gap-4">
+        <h2 id="reviews-title" className="text-xl font-bold tracking-tight md:text-[22px]">Đánh giá</h2>
+        <div className="flex items-center gap-3.5">
+          <span className="text-5xl font-bold leading-none tracking-tighter">
+            {data.count > 0 ? data.average.toLocaleString("vi-VN") : "–"}
+          </span>
+          <div className="flex flex-col gap-1">
+            <Stars value={data.average} size="text-base" />
+            <span className="text-[13px] text-muted">{data.count} lượt đánh giá</span>
           </div>
         </div>
 
-        <div>
-          {mine === null && (
-            <div className="space-y-3">
-              <p className="text-gray-700">Bạn đã mua sản phẩm này? Đăng nhập để chia sẻ cảm nhận.</p>
-              <Link
-                href={`/login?next=${encodeURIComponent(`/products/${productId}`)}`}
-                className="inline-block rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
-              >
-                Đăng nhập để đánh giá
-              </Link>
-              <p className="text-xs text-gray-500">Chỉ khách đã mua và nhận hàng mới viết được đánh giá.</p>
+        <div className="flex flex-col gap-1.5 text-[13px] text-muted">
+          {data.starCounts.map((n, index) => (
+            <div key={index} className="flex items-center gap-2.5">
+              <span className="w-6">{5 - index}★</span>
+              <span className="h-1.5 flex-1 overflow-hidden rounded-sm bg-line">
+                <span className="block h-full rounded-sm bg-star" style={{ width: `${(n / maxStarCount) * 100}%` }} />
+              </span>
+              <span className="w-4 text-right">{n}</span>
             </div>
-          )}
-
-          {mine !== null && !mine.canReview && (
-            <p className="rounded bg-gray-50 p-4 text-sm text-gray-700">
-              Bạn có thể đánh giá sau khi mua và <b>nhận hàng</b> sản phẩm này (đơn ở trạng thái <b>Hoàn thành</b>).
-              Cách này giúp mọi đánh giá trên shop đều từ người dùng thật.
-            </p>
-          )}
-
-          {mine !== null && mine.canReview && <ReviewForm productId={productId} initial={mine.myReview} />}
+          ))}
         </div>
       </div>
 
-      {data.reviews.length === 0 ? (
-        <p className="mt-6 text-center text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>
-      ) : (
-        <ul className="mt-6 divide-y rounded-lg border bg-white">
-          {data.reviews.map((review) => (
-            <li key={review.id} className="p-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold">{review.reviewerName}</span>
-                <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">✓ Đã mua hàng</span>
-              </div>
-              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                <Stars value={review.rating} />
-                <span>{formatDateTime(review.createdAt)}</span>
-                {review.edited && <span>(đã chỉnh sửa)</span>}
-              </div>
-              {review.comment && <p className="mt-2 whitespace-pre-line text-gray-800">{review.comment}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="flex min-w-0 flex-col gap-8">
+        {mine === null && (
+          <div className="flex flex-col items-start gap-3 rounded-xl border border-line bg-surface p-6">
+            <p className="text-ink-2">Bạn đã mua sản phẩm này? Đăng nhập để chia sẻ cảm nhận.</p>
+            <Link
+              href={`/login?next=${encodeURIComponent(`/products/${productId}`)}`}
+              className="flex h-11 items-center rounded-lg bg-ink px-5.5 text-sm font-semibold text-white hover:bg-ink-2"
+            >
+              Đăng nhập để đánh giá
+            </Link>
+            <p className="text-xs text-muted">Chỉ khách đã mua và nhận hàng mới viết được đánh giá.</p>
+          </div>
+        )}
+
+        {mine !== null && !mine.canReview && (
+          <p className="rounded-xl border border-line bg-surface p-6 text-sm leading-relaxed text-ink-2">
+            Bạn có thể đánh giá sau khi mua và <b>nhận hàng</b> sản phẩm này (đơn ở trạng thái <b>Hoàn thành</b>).
+            Cách này giúp mọi đánh giá trên shop đều từ người dùng thật.
+          </p>
+        )}
+
+        {mine !== null && mine.canReview && <ReviewForm productId={productId} initial={mine.myReview} />}
+
+        {data.reviews.length === 0 ? (
+          <p className="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+        ) : (
+          <ul className="flex flex-col">
+            {data.reviews.map((review) => (
+              <li key={review.id} className="flex flex-col gap-1.5 border-t border-line py-5">
+                <div className="flex flex-wrap items-center gap-2.5 text-sm">
+                  <b className="font-semibold">{review.reviewerName}</b>
+                  <span className="text-xs font-medium text-green-700">✓ Đã mua hàng</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs text-muted">
+                  <Stars value={review.rating} size="text-[13px]" />
+                  <span>{formatDateTime(review.createdAt)}</span>
+                  {review.edited && <span>· (đã chỉnh sửa)</span>}
+                </div>
+                {review.comment && <p className="mt-1 whitespace-pre-line leading-relaxed text-ink-2">{review.comment}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 }

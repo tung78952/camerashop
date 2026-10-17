@@ -53,46 +53,50 @@ export default function SpecTable({ specs }: { specs: Spec[] }) {
   }
 
   return (
-    <section ref={sectionRef} className="mt-12 scroll-mt-4">
-      <h2 className="mb-4 text-2xl font-bold">Thông số kỹ thuật</h2>
+    <section ref={sectionRef} aria-labelledby="specs-title" className="mt-12 grid scroll-mt-28 gap-4 md:mt-20 lg:grid-cols-[220px_1fr] lg:gap-14">
+      <h2 id="specs-title" className="text-xl font-bold tracking-tight md:text-[22px]">Thông số kỹ thuật</h2>
 
-      <div className="relative overflow-hidden rounded-lg border bg-white">
-        <table className="w-full text-sm">
-          {shown.map((group, groupIndex) => (
-            <tbody key={`${group.name}-${groupIndex}`}>
-              {group.name && (
-                <tr>
-                  <th colSpan={2} className="bg-gray-100 px-4 py-2 text-left text-xs font-bold uppercase tracking-wide text-gray-700">
-                    {group.name}
-                  </th>
-                </tr>
-              )}
-              {group.rows.map((spec, index) => (
-                <tr key={`${spec.label}-${index}`} className="border-t first:border-t-0">
-                  <th className="w-2/5 px-4 py-2.5 text-left align-top font-medium text-gray-500 sm:w-1/3">{spec.label}</th>
-                  <td className="px-4 py-2.5 text-gray-900">{spec.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          ))}
-        </table>
+      <div className="min-w-0">
+        <div className="relative overflow-hidden rounded-xl border border-line bg-surface">
+          <table className="w-full text-sm">
+            {shown.map((group, groupIndex) => (
+              <tbody key={`${group.name}-${groupIndex}`}>
+                {group.name && (
+                  <tr className={groupIndex > 0 ? "border-t border-line" : ""}>
+                    <th colSpan={2} className="bg-soft px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[.04em]">
+                      {group.name}
+                    </th>
+                  </tr>
+                )}
+                {group.rows.map((spec, index) => (
+                  <tr key={`${spec.label}-${index}`} className="border-t border-line">
+                    <th className="w-2/5 px-4 py-3 text-left align-top font-normal text-muted sm:w-[36%]">{spec.label}</th>
+                    <td className="px-4 py-3 align-top">{spec.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            ))}
+          </table>
 
-        {canCollapse && !expanded && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent" />
-        )}
-      </div>
+          {canCollapse && !expanded && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-surface to-transparent" />
+          )}
+        </div>
 
-      {canCollapse && (
-        <div className="mt-3 text-center">
+        {canCollapse && (
           <button
             type="button"
             onClick={toggle}
-            className="rounded-full border border-red-600 px-5 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+            aria-expanded={expanded}
+            className="mt-4 flex h-11 items-center gap-2 rounded-lg border border-line-strong bg-surface px-5 text-sm font-medium hover:border-ink"
           >
-            {expanded ? "Thu gọn ▲" : `Xem toàn bộ thông số (${specs.length} dòng) ▼`}
+            {expanded ? "Thu gọn" : `Xem toàn bộ thông số (${specs.length} dòng)`}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className={expanded ? "rotate-180" : ""}>
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }

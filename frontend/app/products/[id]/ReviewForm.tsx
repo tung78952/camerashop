@@ -42,25 +42,28 @@ export default function ReviewForm({ productId, initial }: { productId: number; 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <p className="font-semibold">{initial ? "Đánh giá của bạn" : "Viết đánh giá"}</p>
-
-      <div className="flex items-center gap-3" onMouseLeave={() => setHover(0)}>
-        <div className="flex">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHover(star)}
-              aria-label={`${star} sao`}
-              className={`px-0.5 text-3xl leading-none transition ${star <= shown ? "text-yellow-400" : "text-gray-300"}`}
-            >
-              ★
-            </button>
-          ))}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5 md:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-[15px] font-semibold">{initial ? "Đánh giá của bạn" : "Viết đánh giá của bạn"}</span>
+        <div className="flex items-center gap-2" onMouseLeave={() => setHover(0)}>
+          <span className="text-sm text-muted">{STAR_LABELS[shown]}</span>
+          <div role="radiogroup" aria-label="Số sao" className="flex">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                role="radio"
+                aria-checked={star === rating}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHover(star)}
+                aria-label={`${star} sao`}
+                className={`size-10 text-[26px] leading-none transition-colors ${star <= shown ? "text-star" : "text-line-strong"}`}
+              >
+                ★
+              </button>
+            ))}
+          </div>
         </div>
-        <span className="text-sm text-gray-600">{STAR_LABELS[shown]}</span>
       </div>
 
       <div>
@@ -68,22 +71,25 @@ export default function ReviewForm({ productId, initial }: { productId: number; 
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           maxLength={MAX_COMMENT}
-          rows={4}
-          placeholder="Máy dùng thế nào? Ảnh, pin, lấy nét... (không bắt buộc)"
-          className="w-full rounded border px-3 py-2 text-sm"
+          rows={3}
+          aria-label="Nhận xét"
+          placeholder="Bạn thấy sản phẩm thế nào? Ảnh, pin, lấy nét... (không bắt buộc)"
+          className="w-full resize-y rounded-lg border border-line-strong bg-surface px-3.5 py-3 text-sm outline-none focus:border-ink"
         />
-        <p className="text-right text-xs text-gray-400">{comment.length}/{MAX_COMMENT}</p>
+        <p className="text-right text-xs text-muted">{comment.length}/{MAX_COMMENT}</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          className="h-11 rounded-lg bg-ink px-5.5 text-sm font-semibold text-white hover:bg-ink-2 disabled:opacity-60"
         >
-          {saving ? "Đang gửi..." : initial ? "Cập nhật đánh giá" : "Gửi đánh giá"}
+          {saving ? "Đang gửi…" : initial ? "Cập nhật đánh giá" : "Gửi đánh giá"}
         </button>
-        {message && <span className={`text-sm ${message.ok ? "text-green-600" : "text-red-600"}`}>{message.text}</span>}
+        {message && (
+          <span role="status" className={`text-sm ${message.ok ? "text-green-700" : "text-red-700"}`}>{message.text}</span>
+        )}
       </div>
     </form>
   );

@@ -20,7 +20,7 @@ export default function VariantPicker({ variants }: { variants: Variant[] }) {
   const pathname = usePathname();
 
   if (!selected) {
-    return <p className="text-gray-500">Sản phẩm tạm ngừng kinh doanh</p>;
+    return <p className="mt-6 text-muted">Sản phẩm tạm ngừng kinh doanh</p>;
   }
 
   const inStock = selected.stock > 0;
@@ -48,56 +48,85 @@ export default function VariantPicker({ variants }: { variants: Variant[] }) {
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-3xl font-bold text-red-600">{formatPrice(selected.price)}</p>
+    <div>
+      <p className="price mb-7 mt-6 text-[28px] font-bold tracking-tight text-accent md:text-[34px]">{formatPrice(selected.price)}</p>
 
-      {variants.length > 1 && (
-        <div>
-          <p className="mb-2 text-sm font-medium">Phiên bản</p>
-          <div className="flex flex-wrap gap-2">
-            {variants.map((variant) => (
-              <button
-                key={variant.id}
-                type="button"
-                onClick={() => chooseVariant(variant)}
-                className={`rounded border px-4 py-2 text-sm ${
-                  variant.id === selected.id ? "border-red-600 bg-red-50 font-semibold text-red-700" : ""
-                } ${variant.stock === 0 ? "text-gray-400 line-through" : ""}`}
-              >
-                {variant.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="flex flex-col gap-2.5 border-t border-line pt-6">
+        {variants.length > 1 && (
+          <>
+            <span id="variant-label" className="text-[13px] font-semibold">Phiên bản</span>
+            <div role="group" aria-labelledby="variant-label" className="flex flex-wrap gap-2.5">
+              {variants.map((variant) => (
+                <button
+                  key={variant.id}
+                  type="button"
+                  onClick={() => chooseVariant(variant)}
+                  aria-pressed={variant.id === selected.id}
+                  className={`h-11 rounded-lg px-4.5 text-sm font-medium ${
+                    variant.id === selected.id
+                      ? "border-[1.5px] border-ink bg-ink text-white"
+                      : "border border-line-strong bg-surface hover:border-ink"
+                  } ${variant.stock === 0 ? "line-through opacity-60" : ""}`}
+                >
+                  {variant.name}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
 
-      <p className={`text-sm ${inStock ? "text-green-700" : "text-gray-500"}`}>
-        {inStock ? `Còn ${selected.stock} sản phẩm` : "Hết hàng"}
-        <span className="ml-3 text-gray-400">SKU: {selected.sku}</span>
-      </p>
+        <p className="mt-1 flex flex-wrap gap-4 text-[13px]">
+          <span className={inStock ? "font-medium text-green-700" : "text-muted"}>
+            {inStock ? `Còn ${selected.stock} sản phẩm` : "Hết hàng"}
+          </span>
+          <span className="text-muted">SKU: {selected.sku}</span>
+        </p>
+      </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <QuantityStepper value={quantity} max={selected.stock} onChange={setQuantity} disabled={!inStock || loading} />
+      <div className="mt-6 flex flex-wrap gap-3">
+        <QuantityStepper size="lg" value={quantity} max={selected.stock} onChange={setQuantity} disabled={!inStock || loading} />
         <button
           type="button"
           onClick={handleAddToCart}
           disabled={!inStock || loading}
-          className="rounded bg-red-600 px-6 py-3 font-semibold uppercase text-white hover:bg-red-700 disabled:opacity-50"
+          className="flex h-13 min-w-50 flex-1 items-center justify-center gap-2.5 rounded-lg bg-accent text-[15px] font-semibold text-white hover:bg-accent-hover disabled:bg-line disabled:text-stone-500"
         >
-          {!inStock ? "Hết hàng" : loading ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+          {loading ? <Spinner /> : <CartIcon />}
+          {!inStock ? "Hết hàng" : loading ? "Đang thêm…" : "Thêm vào giỏ hàng"}
         </button>
       </div>
 
       {message && (
-        <p className={`text-sm ${message.ok ? "text-green-700" : "text-red-600"}`}>
+        <div
+          role="status"
+          className={`mt-3 flex items-center gap-2.5 rounded-lg px-3.5 py-3 text-sm ${
+            message.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"
+          }`}
+        >
           {message.text}
           {message.ok && (
-            <Link href="/cart" className="ml-2 font-semibold underline">Xem giỏ hàng</Link>
+            <Link href="/cart" className="ml-auto font-semibold underline underline-offset-[3px]">Xem giỏ</Link>
           )}
-        </p>
+        </div>
       )}
     </div>
   );
+}
+
+// Cart icon on the add-to-cart button.
+function CartIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 8H6.2" />
+      <circle cx="9" cy="20" r="1.4" />
+      <circle cx="18" cy="20" r="1.4" />
+    </svg>
+  );
+}
+
+// Loading spinner shown while the request is in flight.
+function Spinner() {
+  return <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />;
 }
 
 type Message = {
