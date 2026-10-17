@@ -185,12 +185,12 @@ export default function ProductForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <section className="space-y-4 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Thông tin</h2>
+      <section className="space-y-4.5 rounded-xl border border-line bg-surface p-5 md:p-7">
+        <h2 className="text-[17px] font-bold">Thông tin</h2>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium">Tên sản phẩm</span>
+          <span className="mb-1.5 block text-[13px] font-medium">Tên sản phẩm</span>
           <input value={name} onChange={(e) => setName(e.target.value)} required maxLength={100}
-            placeholder="vd Sony Alpha 7 V" className="w-full rounded border px-3 py-2 outline-none focus:border-red-600" />
+            placeholder="vd Sony Alpha 7 V" className="h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm outline-none focus:border-ink" />
         </label>
         <div className="grid gap-4 sm:grid-cols-3">
           <Select label="Hãng" value={brandId} onChange={setBrandId} required options={options.brands} />
@@ -198,36 +198,36 @@ export default function ProductForm({
           <Select label="Ngàm" value={mountId} onChange={setMountId} options={options.mounts} emptyLabel="(Không có ngàm)" />
         </div>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium">Mô tả</span>
+          <span className="mb-1.5 block text-[13px] font-medium">Mô tả</span>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={2000}
-            className="w-full rounded border px-3 py-2 outline-none focus:border-red-600" />
+            className="w-full resize-y rounded-lg border border-line-strong bg-surface px-3 py-2.5 text-sm outline-none focus:border-ink" />
         </label>
       </section>
 
-      <section className="space-y-4 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Ảnh <span className="text-sm font-normal text-gray-500">(ảnh đầu tiên = ảnh chính)</span></h2>
+      <section className="space-y-4.5 rounded-xl border border-line bg-surface p-5 md:p-7">
+        <h2 className="text-[17px] font-bold">Ảnh <span className="text-sm font-normal text-muted">(ảnh đầu tiên = ảnh chính)</span></h2>
         <div
           onClick={() => fileInput.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={onDrop}
-          className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center text-sm ${
-            dragOver ? "border-red-600 bg-red-50" : "border-gray-300 hover:border-gray-400"}`}
+          className={`cursor-pointer rounded-xl border-2 border-dashed bg-bg p-8 text-center text-sm ${
+            dragOver ? "border-accent bg-accent-soft" : "border-line-strong hover:border-stone-400"}`}
         >
           <p className="font-medium">Kéo thả ảnh vào đây</p>
-          <p className="text-gray-500">hoặc bấm để chọn file · JPG/PNG, tối đa 5 MB/ảnh · tự đặt vào khung vuông nền trắng</p>
-          {uploading > 0 && <p className="mt-2 text-red-600">Đang tải {uploading} ảnh lên...</p>}
+          <p className="text-muted">hoặc bấm để chọn file · JPG/PNG, tối đa 5 MB/ảnh · tự đặt vào khung vuông nền trắng</p>
+          {uploading > 0 && <p className="mt-2 text-accent">Đang tải {uploading} ảnh lên...</p>}
           <input ref={fileInput} type="file" accept="image/jpeg,image/png" multiple onChange={onPick} className="hidden" />
         </div>
 
         {images.length > 0 && (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
             {images.map((src, index) => (
-              <div key={src} className={`overflow-hidden rounded border ${index === 0 ? "border-red-600 ring-1 ring-red-600" : ""}`}>
+              <div key={src} className={`overflow-hidden rounded-lg border ${index === 0 ? "border-ink ring-1 ring-ink" : "border-line"}`}>
                 <Image src={imageSrc(src)} alt={`Ảnh ${index + 1}`} width={160} height={160} unoptimized className="aspect-square w-full bg-white object-contain" />
-                <div className="flex items-center justify-between border-t bg-gray-50 px-1 py-0.5 text-xs">
+                <div className="flex items-center justify-between border-t border-line bg-soft px-1 py-0.5 text-xs">
                   {index === 0
-                    ? <span className="px-1 font-semibold text-red-600">Ảnh chính</span>
+                    ? <span className="px-1 font-semibold text-accent">Ảnh chính</span>
                     : <IconButton label="Đặt làm ảnh chính" onClick={() => makeMain(index)}>★</IconButton>}
                   <span className="flex">
                     <IconButton label="Sang trái" onClick={() => moveImage(index, -1)}>←</IconButton>
@@ -241,45 +241,45 @@ export default function ProductForm({
         )}
       </section>
 
-      <section className="space-y-3 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Phiên bản <span className="text-sm font-normal text-gray-500">(giá, SKU, tồn kho nằm ở từng phiên bản)</span></h2>
+      <section className="space-y-4 rounded-xl border border-line bg-surface p-5 md:p-7">
+        <h2 className="text-[17px] font-bold">Phiên bản <span className="text-sm font-normal text-muted">(giá, SKU, tồn kho nằm ở từng phiên bản)</span></h2>
         <div className="space-y-2">
           {variants.map((row) => (
             <div key={row.key} className="grid grid-cols-12 items-start gap-2">
               <input value={row.name} onChange={(e) => updateVariant(row.key, "name", e.target.value)} required
-                placeholder="Tên (vd Body only)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-3" />
+                placeholder="Tên (vd Body only)" className="col-span-12 h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm sm:col-span-3" />
               <input value={row.sku} onChange={(e) => updateVariant(row.key, "sku", e.target.value.toUpperCase())} required
-                placeholder="SKU (vd SONY-A7V-BODY)" className="col-span-12 rounded border px-2 py-1.5 font-mono text-sm sm:col-span-3" />
+                placeholder="SKU (vd SONY-A7V-BODY)" className="col-span-12 h-10 rounded-lg border border-line-strong bg-surface px-3 font-mono text-sm sm:col-span-3" />
               <div className="col-span-7 sm:col-span-3">
                 <input type="number" min={0} step={1} value={row.price} onChange={(e) => updateVariant(row.key, "price", e.target.value)}
-                  required placeholder="Giá (đồng)" className="w-full rounded border px-2 py-1.5 text-sm" />
-                {row.price && <p className="mt-0.5 text-xs text-gray-500">= {formatPrice(Number(row.price))}</p>}
+                  required placeholder="Giá (đồng)" className="w-full h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm" />
+                {row.price && <p className="mt-0.5 text-xs text-muted">= {formatPrice(Number(row.price))}</p>}
               </div>
               <input type="number" min={0} step={1} value={row.stock} onChange={(e) => updateVariant(row.key, "stock", e.target.value)}
-                required placeholder="Kho" className="col-span-3 rounded border px-2 py-1.5 text-sm sm:col-span-2" />
+                required placeholder="Kho" className="col-span-3 h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm sm:col-span-2" />
               <button type="button" onClick={() => setVariants((prev) => prev.filter((r) => r.key !== row.key))}
                 disabled={variants.length === 1} aria-label="Xóa phiên bản"
-                className="col-span-2 rounded border py-1.5 text-sm text-gray-500 hover:bg-gray-100 disabled:opacity-30 sm:col-span-1">×</button>
+                className="col-span-2 h-10 rounded-lg border border-line-strong text-sm text-muted hover:border-ink disabled:opacity-30 sm:col-span-1">×</button>
             </div>
           ))}
         </div>
         <button type="button" onClick={() => setVariants((prev) => [...prev, emptyRow()])}
-          className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-gray-100">+ Thêm phiên bản</button>
+          className="h-10 rounded-lg border border-dashed border-stone-400 bg-surface px-3.5 text-sm font-medium text-ink-2 hover:border-ink">+ Thêm phiên bản</button>
       </section>
 
-      <section className="space-y-3 rounded-lg border bg-white p-5">
-        <h2 className="font-semibold">Thông số kỹ thuật <span className="text-sm font-normal text-gray-500">(hiện thành bảng chia nhóm ở trang sản phẩm; các dòng cùng nhóm để liền nhau)</span></h2>
+      <section className="space-y-4 rounded-xl border border-line bg-surface p-5 md:p-7">
+        <h2 className="text-[17px] font-bold">Thông số kỹ thuật <span className="text-sm font-normal text-muted">(hiện thành bảng chia nhóm ở trang sản phẩm; các dòng cùng nhóm để liền nhau)</span></h2>
         {specs.length > 0 && (
           <div className="space-y-2">
             {specs.map((row, index) => (
               <div key={row.key} className="grid grid-cols-12 gap-2">
                 <input value={row.group} onChange={(e) => updateSpec(row.key, "group", e.target.value)} maxLength={60}
                   list="spec-groups" placeholder="Nhóm (vd Quay video)"
-                  className="col-span-12 rounded border bg-gray-50 px-2 py-1.5 text-sm sm:col-span-3 [&::-webkit-calendar-picker-indicator]:hidden!" />
+                  className="col-span-12 h-10 rounded-lg border border-line-strong bg-soft px-3 text-sm sm:col-span-3 [&::-webkit-calendar-picker-indicator]:hidden!" />
                 <input value={row.label} onChange={(e) => updateSpec(row.key, "label", e.target.value)} required maxLength={60}
-                  placeholder="Tên (vd Cảm biến)" className="col-span-12 rounded border px-2 py-1.5 text-sm sm:col-span-3" />
+                  placeholder="Tên (vd Cảm biến)" className="col-span-12 h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm sm:col-span-3" />
                 <input value={row.value} onChange={(e) => updateSpec(row.key, "value", e.target.value)} required maxLength={200}
-                  placeholder="Giá trị (vd Full-frame 33MP)" className="col-span-9 rounded border px-2 py-1.5 text-sm sm:col-span-4" />
+                  placeholder="Giá trị (vd Full-frame 33MP)" className="col-span-9 h-10 rounded-lg border border-line-strong bg-surface px-3 text-sm sm:col-span-4" />
                 <span className="col-span-3 flex sm:col-span-2">
                   <IconButton label="Lên trên" onClick={() => moveSpec(index, -1)}>↑</IconButton>
                   <IconButton label="Xuống dưới" onClick={() => moveSpec(index, 1)}>↓</IconButton>
@@ -295,16 +295,16 @@ export default function ProductForm({
           ))}
         </datalist>
         <button type="button" onClick={() => setSpecs((prev) => [...prev, emptySpec(prev[prev.length - 1]?.group ?? "")])}
-          className="rounded border px-3 py-1.5 text-sm font-medium hover:bg-gray-100">+ Thêm thông số</button>
+          className="h-10 rounded-lg border border-dashed border-stone-400 bg-surface px-3.5 text-sm font-medium text-ink-2 hover:border-ink">+ Thêm thông số</button>
       </section>
 
       {isBattery && (
-        <section className="space-y-3 rounded-lg border bg-white p-5">
-          <h2 className="font-semibold">Dùng được với máy ảnh</h2>
+        <section className="space-y-4 rounded-xl border border-line bg-surface p-5 md:p-7">
+          <h2 className="text-[17px] font-bold">Dùng được với máy ảnh</h2>
           <div className="grid gap-1 sm:grid-cols-3">
             {cameras.map((camera) => (
-              <label key={camera.id} className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={cameraIds.includes(camera.id)} onChange={() => toggleCamera(camera.id)} className="accent-red-600" />
+              <label key={camera.id} className="flex min-h-10 items-center gap-2.5 text-sm">
+                <input type="checkbox" checked={cameraIds.includes(camera.id)} onChange={() => toggleCamera(camera.id)} className="size-4.5 accent-accent" />
                 {camera.name}
               </label>
             ))}
@@ -312,15 +312,15 @@ export default function ProductForm({
         </section>
       )}
 
-      {error && <p className="rounded bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
 
       <div className="flex gap-3">
         <button type="submit" disabled={saving || uploading > 0}
-          className="rounded bg-red-600 px-6 py-2.5 font-semibold text-white hover:bg-red-700 disabled:opacity-50">
+          className="h-12 rounded-lg bg-accent px-6 font-semibold text-white hover:bg-accent-hover disabled:opacity-60">
           {saving ? "Đang lưu..." : initial ? "Lưu thay đổi" : "Thêm sản phẩm"}
         </button>
         <button type="button" onClick={() => router.push("/admin/products")}
-          className="rounded border px-6 py-2.5 font-medium hover:bg-gray-100">Hủy</button>
+          className="h-12 rounded-lg border border-line-strong bg-surface px-6 font-medium hover:border-ink">Hủy</button>
       </div>
     </form>
   );
@@ -344,9 +344,9 @@ function Select({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm font-medium">{label}</span>
+      <span className="mb-1.5 block text-[13px] font-medium">{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)} required={required}
-        className="w-full rounded border bg-white px-3 py-2 outline-none focus:border-red-600">
+        className="h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm outline-none focus:border-ink">
         <option value="">{emptyLabel}</option>
         {options.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
       </select>
@@ -357,7 +357,7 @@ function Select({
 function IconButton({ label, onClick, children }: { label: string; onClick: () => void; children: string }) {
   return (
     <button type="button" onClick={onClick} aria-label={label} title={label}
-      className="rounded px-1.5 py-0.5 text-gray-600 hover:bg-gray-200">
+      className="rounded px-1.5 py-0.5 text-ink-2 hover:bg-line">
       {children}
     </button>
   );

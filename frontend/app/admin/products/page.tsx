@@ -17,57 +17,57 @@ export default async function AdminProductsPage() {
   const hidden = products.filter((p) => !p.active).length;
 
   return (
-    <main className="mx-auto w-full max-w-6xl p-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Quản lý sản phẩm</h1>
-          <p className="text-sm text-gray-500">{products.length} sản phẩm · {hidden} đã ẩn</p>
-        </div>
-        <Link href="/admin/products/new" className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
-          + Thêm sản phẩm
+    <main className="mx-auto w-full max-w-300 px-4 pb-14 pt-6 md:px-6 md:pb-24">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted">{products.length} sản phẩm · {hidden} đã ẩn</p>
+        <Link href="/admin/products/new" className="flex h-11 items-center gap-2 rounded-lg bg-accent px-4.5 text-sm font-semibold text-white hover:bg-accent-hover">
+          <span aria-hidden="true" className="text-lg leading-none">+</span>
+          Thêm sản phẩm
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
-            <tr>
-              <th className="px-4 py-3">Sản phẩm</th>
-              <th className="px-4 py-3 text-right">Giá</th>
-              <th className="px-4 py-3 text-right">Tồn kho</th>
-              <th className="px-4 py-3">Trạng thái</th>
-              <th className="px-4 py-3">Thao tác</th>
+      <div className="overflow-x-auto rounded-xl border border-line bg-surface">
+        <table className="w-full min-w-205 text-sm">
+          <thead>
+            <tr className="text-left text-xs text-muted">
+              <th scope="col" className="py-3 pl-6 pr-4 font-semibold">Sản phẩm</th>
+              <th scope="col" className="px-4 py-3 text-right font-semibold">Giá</th>
+              <th scope="col" className="px-4 py-3 text-right font-semibold">Tồn kho</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Trạng thái</th>
+              <th scope="col" className="py-3 pl-4 pr-6 text-right font-semibold">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody>
             {products.map((p) => (
-              <tr key={p.id} className={p.active ? "" : "bg-gray-50 text-gray-500"}>
-                <td className="px-4 py-3">
+              <tr key={p.id} className={`border-t border-line align-middle ${p.active ? "hover:bg-bg" : "bg-bg text-muted"}`}>
+                <td className="py-3.5 pl-6 pr-4">
                   <div className="flex items-center gap-3">
-                    <div className="relative size-12 shrink-0 overflow-hidden rounded border bg-white">
-                      <ProductImage src={p.imageUrl} name={p.name} brand={p.brand} category={p.category} sizes="48px" />
+                    <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-line bg-surface">
+                      <span className="absolute inset-1">
+                        <ProductImage src={p.imageUrl} name={p.name} brand={p.brand} category={p.category} sizes="48px" />
+                      </span>
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-medium">{p.name}</p>
-                      <p className="text-xs text-gray-500">#{p.id} · {p.brand} · {p.category} · {p.variantCount} phiên bản</p>
+                      <p className="text-xs text-muted">#{p.id} · {p.brand} · {p.category} · {p.variantCount} phiên bản</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="price whitespace-nowrap px-4 py-3.5 text-right">
                   {p.minPrice != null && p.maxPrice != null ? formatPriceRange(p.minPrice, p.maxPrice) : "—"}
                 </td>
-                <td className={`px-4 py-3 text-right font-medium ${p.totalStock === 0 ? "text-red-600" : ""}`}>
+                <td className={`price px-4 py-3.5 text-right font-semibold ${p.totalStock === 0 ? "text-red-700" : ""}`}>
                   {p.totalStock}
                 </td>
-                <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    p.active ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-600"}`}>
+                <td className="px-4 py-3.5">
+                  <span className={`inline-flex h-6.5 items-center rounded-full px-2.5 text-xs font-semibold ${
+                    p.active ? "bg-green-100 text-green-800" : "bg-line text-ink-2"}`}>
                     {p.active ? "Đang bán" : "Đã ẩn"}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Link href={`/admin/products/${p.id}/edit`} className="rounded border px-3 py-1 text-xs font-medium hover:bg-gray-100">
+                <td className="py-3.5 pl-4 pr-6">
+                  <div className="flex items-center justify-end gap-2">
+                    <Link href={`/admin/products/${p.id}/edit`} className="flex h-9 items-center rounded-lg border border-line-strong bg-surface px-3.5 text-[13px] font-semibold text-ink hover:border-ink">
                       Sửa
                     </Link>
                     <ToggleActiveButton productId={p.id} active={p.active} />

@@ -15,9 +15,9 @@ export default async function NewProductPage() {
   const cameras = products.filter((p) => p.category === "Máy ảnh").map((p) => ({ id: p.id, name: p.name }));
 
   return (
-    <main className="mx-auto w-full max-w-4xl p-6">
-      <Link href="/admin/products" className="text-sm text-gray-500 hover:text-red-600">← Quản lý sản phẩm</Link>
-      <h1 className="mb-6 mt-2 text-2xl font-bold">Thêm sản phẩm</h1>
+    <main className="mx-auto w-full max-w-225 px-4 pb-14 pt-6 md:px-6 md:pb-24">
+      <Link href="/admin/products" className="text-sm text-muted hover:text-accent">← Quản lý sản phẩm</Link>
+      <h2 className="mb-6 mt-2 text-2xl font-bold tracking-tight">Thêm sản phẩm</h2>
       <ProductForm options={options} cameras={cameras} />
     </main>
   );

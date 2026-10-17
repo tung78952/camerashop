@@ -29,9 +29,9 @@ export default function ToggleActiveButton({ productId, active }: { productId: n
         type="button"
         onClick={toggle}
         disabled={loading}
-        className="rounded border px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+        className="h-9 whitespace-nowrap rounded-lg border border-line-strong bg-surface px-3.5 text-[13px] font-medium text-ink-2 hover:border-ink disabled:opacity-60"
       >
-        {loading ? "..." : active ? "Ẩn" : "Hiện lại"}
+        {loading ? "…" : active ? "Ẩn" : "Hiện lại"}
       </button>
       {error && <span className="ml-2 text-xs text-red-700">{error}</span>}
     </span>

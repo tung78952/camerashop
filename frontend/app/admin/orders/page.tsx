@@ -1,89 +1,91 @@
 // Admin orders: a table on desktop, cards on phones, with status actions.
 
-import Link from "next/link";
-import { redirect } from "next/navigation";
-
+import { OrderStatusBadge, PaymentStatusBadge } from "@/components/StatusBadge";
 import { getAllOrdersAdmin } from "@/lib/api";
-import {
-  formatDateTime,
-  formatOrderStatus,
-  formatPaymentStatus,
-  formatPrice,
-  orderStatusColor,
-  paymentStatusColor,
-} from "@/lib/format";
-import { getSession } from "@/lib/session";
+import { formatDateTime, formatPrice } from "@/lib/format";
 
+import { Forbidden, requireAdmin } from "../guard";
 import StatusActions from "./StatusActions";
 
 export default async function AdminOrdersPage() {
-  const session = await getSession();
-  if (!session) {
-    redirect("/login?next=/admin/orders");
-  }
-  if (session.role !== "ADMIN") {
-    return (
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
-        <h1 className="text-2xl font-bold">403 – Không có quyền</h1>
-        <p className="text-gray-500">Trang này chỉ dành cho quản trị viên.</p>
-        <Link href="/" className="text-red-600 hover:underline">Về trang chủ</Link>
-      </main>
-    );
+  if (!(await requireAdmin("/admin/orders"))) {
+    return <Forbidden />;
   }
 
   const orders = await getAllOrdersAdmin();
 
   return (
-    <main className="mx-auto w-full max-w-6xl p-6">
-      <h1 className="mb-1 text-2xl font-bold">Quản lý đơn hàng</h1>
-      <p className="mb-6 text-sm text-gray-500">{orders.length} đơn · mới nhất ở trên</p>
+    <main className="mx-auto w-full max-w-300 px-4 pb-14 pt-6 md:px-6 md:pb-24">
+      <p className="mb-4 text-sm text-muted">{orders.length} đơn · mới nhất ở trên</p>
 
       {orders.length === 0 ? (
-        <p className="rounded-lg border bg-white p-8 text-center text-gray-500">Chưa có đơn hàng nào.</p>
+        <p className="rounded-xl border border-line bg-surface p-10 text-center text-muted">Chưa có đơn hàng nào.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-white">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-500">
-              <tr>
-                <th className="px-4 py-3">Đơn</th>
-                <th className="px-4 py-3">Ngày đặt</th>
-                <th className="px-4 py-3">Người nhận</th>
-                <th className="px-4 py-3 text-right">Tổng tiền</th>
-                <th className="px-4 py-3">Trạng thái</th>
-                <th className="px-4 py-3">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-4 py-3 font-semibold">#{order.id}</td>
-                  <td className="px-4 py-3 text-gray-600">{formatDateTime(order.createdAt)}</td>
-                  <td className="px-4 py-3">
-                    {order.receiverName}
-                    <p className="text-xs text-gray-500">{order.phone}</p>
-                  </td>
-                  <td className="px-4 py-3 text-right font-medium">
-                    {formatPrice(order.totalAmount)}
-                    <p className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs ${paymentStatusColor(order.paymentStatus)}`}>
-                      {order.paymentMethod === "VNPAY" ? "VNPay · " : "COD · "}{formatPaymentStatus(order.paymentStatus)}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${orderStatusColor(order.status)}`}>
-                      {formatOrderStatus(order.status)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusActions orderId={order.id} status={order.status} />
-                  </td>
+        <>
+          <div className="hidden overflow-x-auto rounded-xl border border-line bg-surface md:block">
+            <table className="w-full min-w-245 text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted">
+                  <th scope="col" className="py-3 pl-6 pr-4 font-semibold">Đơn</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Ngày đặt</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Người nhận</th>
+                  <th scope="col" className="px-4 py-3 text-right font-semibold">Tổng tiền</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Thanh toán</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Trạng thái</th>
+                  <th scope="col" className="py-3 pl-4 pr-6 text-right font-semibold">Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id} className="border-t border-line align-middle hover:bg-bg">
+                    <td className="py-4 pl-6 pr-4 font-bold">#{order.id}</td>
+                    <td className="whitespace-nowrap px-4 py-4 text-ink-2">{formatDateTime(order.createdAt)}</td>
+                    <td className="px-4 py-4">
+                      <span className="flex flex-col">
+                        <span className="font-medium">{order.receiverName}</span>
+                        <span className="text-xs text-muted">{order.phone}</span>
+                      </span>
+                    </td>
+                    <td className="price whitespace-nowrap px-4 py-4 text-right font-semibold">{formatPrice(order.totalAmount)}</td>
+                    <td className="px-4 py-4">
+                      <span className="flex flex-col items-start gap-1">
+                        <PaymentStatusBadge status={order.paymentStatus} />
+                        <span className="text-xs text-muted">{order.paymentMethod === "VNPAY" ? "VNPay" : "COD"}</span>
+                      </span>
+                    </td>
+                    <td className="px-4 py-4"><OrderStatusBadge status={order.status} /></td>
+                    <td className="py-4 pl-4 pr-6">
+                      <StatusActions orderId={order.id} status={order.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      <Link href="/" className="mt-6 inline-block text-sm text-gray-500 hover:text-red-600">← Về trang chủ</Link>
+          <ul className="flex flex-col gap-3 md:hidden">
+            {orders.map((order) => (
+              <li key={order.id} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <b className="font-bold">Đơn #{order.id}</b>
+                  <OrderStatusBadge status={order.status} />
+                </div>
+                <div className="flex flex-col text-sm">
+                  <span className="font-medium">{order.receiverName} · {order.phone}</span>
+                  <span className="text-[13px] text-muted">
+                    {formatDateTime(order.createdAt)} · {order.paymentMethod === "VNPAY" ? "VNPay" : "COD"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <PaymentStatusBadge status={order.paymentStatus} />
+                  <span className="price font-bold">{formatPrice(order.totalAmount)}</span>
+                </div>
+                <StatusActions orderId={order.id} status={order.status} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </main>
   );
 }
